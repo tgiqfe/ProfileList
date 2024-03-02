@@ -8,7 +8,6 @@ namespace ProfileList.Lib
         public string DomainName { get; private set; }
         public bool IsDomainMachine { get; private set; }   
         public string[] SystemSIDs { get; private set; }
-        public IEnumerable<UserLogonSession> UserLogonSessions { get; private set; }
 
         public MachineInfo()
         {
@@ -26,12 +25,6 @@ namespace ProfileList.Lib
                 OfType<ManagementObject>().
                 Select(x => x["SID"] as string).
                 ToArray();
-            this.UserLogonSessions = UserLogonSession.GetLoggedOnSession();
-        }
-
-        public void RefreshSessionInfo()
-        {
-            this.UserLogonSessions = UserLogonSession.GetLoggedOnSession();
         }
     }
 }
