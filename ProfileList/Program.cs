@@ -5,18 +5,18 @@ using System.Diagnostics;
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
-Item.MachineInfo = new MachineInfo();
-UserProfileCollection collection = new();
+Item.MachineInfo = new();
+Item.UserProfileCollection = new();
 
 app.MapGet("/", () => "");
 app.MapPost("/", () => "");
 
-app.MapGet("/api/list", () =>
+app.MapGet("/api/profile/list", () =>
 {
-    return collection;
+    return Item.UserProfileCollection;
 });
 
-app.MapGet("/api/machine", () =>
+app.MapGet("/api/info/machine", () =>
 {
     return new
     {
@@ -27,7 +27,7 @@ app.MapGet("/api/machine", () =>
     };
 });
 
-app.MapGet("/api/session", () =>
+app.MapGet("/api/info/session", () =>
 {
     return new
     {
@@ -35,16 +35,29 @@ app.MapGet("/api/session", () =>
     };
 });
 
-app.MapGet("/api/reflesh", () =>
+app.MapGet("/api/info/reflesh", () =>
 {
-    Item.MachineInfo = new MachineInfo();
-    collection = new UserProfileCollection();
+    Item.MachineInfo = new();
+    Item.UserProfileCollection = new();
     return new
     {
         Result = "OK"
     };
 });
 
+app.MapGet("/api/system/close", () =>
+{
+    Task.Run(() =>
+    {
+        Task.Delay(1000);
+        app.StopAsync();
+
+    });
+    return new
+    {
+        Result = "OK"
+    };
+});
 
 
 app.Run("http://*:5000");

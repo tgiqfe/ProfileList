@@ -3,8 +3,6 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 
-//  参考)
-//  https://stackoverflow.com/questions/32522545/retrieve-user-logontime-on-terminal-service-with-remote-desktop-services-api
 //  [WTS_INFO_CLASS]
 //  https://learn.microsoft.com/ja-jp/windows/win32/api/wtsapi32/ne-wtsapi32-wts_info_class
 //  [WTSINFOA]
@@ -89,7 +87,7 @@ namespace ProfileList.Lib
             WTSIsRemoteSession = 29
         }
 
-        enum WTS_CONNECTSTATE_CLASS
+        public enum WTS_CONNECTSTATE_CLASS
         {
             WTSActive,
             WTSConnected,
@@ -103,42 +101,42 @@ namespace ProfileList.Lib
             WTSInit
         }
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-        struct WTSINFOA
+        public struct WTSINFOA
         {
-            const int WINSTATIONNAME_LENGTH = 32;
-            const int DOMAIN_LENGTH = 17;
-            const int USERNAME_LENGTH = 20;
+            public const int WINSTATIONNAME_LENGTH = 32;
+            public const int DOMAIN_LENGTH = 17;
+            public const int USERNAME_LENGTH = 20;
+            public WTS_CONNECTSTATE_CLASS State;
+            public int SessionId;
+            public int IncomingBytes;
+            public int OutgoingBytes;
+            public int IncomingFrames;
+            public int OutgoingFrames;
+            public int IncomingCompressedBytes;
+            public int OutgoingCompressedBytes;
 
-            private WTS_CONNECTSTATE_CLASS State;
-            private int SessionId;
-            private int IncomingBytes;
-            private int OutgoingBytes;
-            private int IncomingFrames;
-            private int OutgoingFrames;
-            private int IncomingCompressedBytes;
-            private int OutgoingCompressedBytes;
-
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = WINSTATIONNAME_LENGTH)]
-            private byte[] WinStationNameRaw;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = DOMAIN_LENGTH)]
-            private byte[] DomainRaw;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = USERNAME_LENGTH + 1)]
-            private byte[] UserNameRaw;
-            private long ConnectTimeUTC;
-            private long DisconnectTimeUTC;
-            private long LastInputTimeUTC;
-            private long LogonTimeUTC;
-            private long CurrentTimeUTC;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = WINSTATIONNAME_LENGTH)]
+            public byte[] WinStationNameRaw;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = DOMAIN_LENGTH)]
+            public byte[] DomainRaw;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = USERNAME_LENGTH + 1)]
+            public byte[] UserNameRaw;
 
             public string WinStationName { get { return Encoding.ASCII.GetString(WinStationNameRaw); } }
             public string Domain { get { return Encoding.ASCII.GetString(DomainRaw); } }
             public string UserName { get { return Encoding.ASCII.GetString(UserNameRaw); } }
-            public DateTime ConnectTime { get { return DateTime.FromFileTimeUtc(ConnectTimeUTC); } }
-            public DateTime DisconnectTime { get { return DateTime.FromFileTimeUtc(DisconnectTimeUTC); } }
-            public DateTime LastInputTime { get { return DateTime.FromFileTimeUtc(LastInputTimeUTC); } }
-            public DateTime LogonTime { get { return DateTime.FromFileTimeUtc(LogonTimeUTC); } }
-            public DateTime CurrentTime { get { return DateTime.FromFileTimeUtc(CurrentTimeUTC); } }
+
+            public long ConnectTimeUTC;
+            public long DisconnectTimeUTC;
+            public long LastInputTimeUTC;
+            public long LogonTimeUTC;
+            public long CurrentTimeUTC;
+
+            public DateTime ConnectTime { get { return DateTime.FromFileTime(ConnectTimeUTC); } }
+            public DateTime DisconnectTime { get { return DateTime.FromFileTime(DisconnectTimeUTC); } }
+            public DateTime LastInputTime { get { return DateTime.FromFileTime(LastInputTimeUTC); } }
+            public DateTime LogonTime { get { return DateTime.FromFileTime(LogonTimeUTC); } }
+            public DateTime CurrentTime { get { return DateTime.FromFileTime(CurrentTimeUTC); } }
         }
 
         #endregion
@@ -149,8 +147,10 @@ namespace ProfileList.Lib
         public int SessionID { get; set; }
         public string SessionType { get; set; }
         public string SessionState { get; set; }
-
         public int ProtocolType { get; set; }
+        public DateTime? ConnectTime { get; set; }
+        public DateTime? DisconnectTime { get; set; }
+        public DateTime LogonTime { get; set; }
 
         #endregion
 
@@ -180,28 +180,39 @@ namespace ProfileList.Lib
                     IntPtr userNamePtr = IntPtr.Zero;
                     IntPtr domainNamePtr = IntPtr.Zero;
                     IntPtr sessionTypePtr = IntPtr.Zero;
-
                     IntPtr protocolTypePtr = IntPtr.Zero;
+                    IntPtr wtsinfoPtr = IntPtr.Zero;
 
                     WTSQuerySessionInformation(serverHandle, si.SessionID, WTS_INFO_CLASS.WTSUserName, out userNamePtr, out bytes);
                     WTSQuerySessionInformation(serverHandle, si.SessionID, WTS_INFO_CLASS.WTSDomainName, out domainNamePtr, out bytes);
                     WTSQuerySessionInformation(serverHandle, si.SessionID, WTS_INFO_CLASS.WTSWinStationName, out sessionTypePtr, out bytes);
-
                     WTSQuerySessionInformation(serverHandle, si.SessionID, WTS_INFO_CLASS.WTSClientProtocolType, out protocolTypePtr, out bytes);
+                    WTSQuerySessionInformation(serverHandle, si.SessionID, WTS_INFO_CLASS.WTSSessionInfo, out wtsinfoPtr, out bytes);
 
-                    list.Add(new UserLogonSession()
+                    var wtsinfo = (WTSINFOA)Marshal.PtrToStructure(wtsinfoPtr, typeof(WTSINFOA));
+                    var protocolType = Marshal.ReadInt32(protocolTypePtr);
+                    var userName = Marshal.PtrToStringAnsi(userNamePtr);
+                    if (!string.IsNullOrEmpty(userName))
                     {
-                        UserName = Marshal.PtrToStringAnsi(userNamePtr),
-                        UserDomain = Marshal.PtrToStringAnsi(domainNamePtr),
-                        SessionID = si.SessionID,
-                        SessionType = Marshal.PtrToStringAnsi(sessionTypePtr),
-                        SessionState = si.State.ToString(),
-                        ProtocolType = Marshal.ReadInt32(protocolTypePtr)
-                    });
+                        list.Add(new UserLogonSession()
+                        {
+                            UserName = userName,
+                            UserDomain = Marshal.PtrToStringAnsi(domainNamePtr),
+                            SessionID = si.SessionID,
+                            SessionType = Marshal.PtrToStringAnsi(sessionTypePtr),
+                            SessionState = si.State.ToString(),
+                            ProtocolType = protocolType,
+                            ConnectTime = protocolType == 2 ? wtsinfo.ConnectTime : null,
+                            DisconnectTime = protocolType == 2 ? wtsinfo.DisconnectTime : null,
+                            LogonTime = wtsinfo.LogonTime,
+                        });
+                    }
 
                     WTSFreeMemory(userNamePtr);
                     WTSFreeMemory(domainNamePtr);
                     WTSFreeMemory(sessionTypePtr);
+                    WTSFreeMemory(protocolTypePtr);
+                    WTSFreeMemory(wtsinfoPtr);
                 }
             }
             WTSFreeMemory(buffer);
