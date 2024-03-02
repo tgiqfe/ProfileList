@@ -148,8 +148,6 @@ namespace ProfileList.Lib
         public string SessionType { get; set; }
         public string SessionState { get; set; }
         public int ProtocolType { get; set; }
-        public DateTime? ConnectTime { get; set; }
-        public DateTime? DisconnectTime { get; set; }
         public DateTime LogonTime { get; set; }
 
         #endregion
@@ -190,7 +188,6 @@ namespace ProfileList.Lib
                     WTSQuerySessionInformation(serverHandle, si.SessionID, WTS_INFO_CLASS.WTSSessionInfo, out wtsinfoPtr, out bytes);
 
                     var wtsinfo = (WTSINFOA)Marshal.PtrToStructure(wtsinfoPtr, typeof(WTSINFOA));
-                    var protocolType = Marshal.ReadInt32(protocolTypePtr);
                     var userName = Marshal.PtrToStringAnsi(userNamePtr);
                     if (!string.IsNullOrEmpty(userName))
                     {
@@ -201,9 +198,7 @@ namespace ProfileList.Lib
                             SessionID = si.SessionID,
                             SessionType = Marshal.PtrToStringAnsi(sessionTypePtr),
                             SessionState = si.State.ToString(),
-                            ProtocolType = protocolType,
-                            ConnectTime = protocolType == 2 ? wtsinfo.ConnectTime : null,
-                            DisconnectTime = protocolType == 2 ? wtsinfo.DisconnectTime : null,
+                            ProtocolType = Marshal.ReadInt32(protocolTypePtr),
                             LogonTime = wtsinfo.LogonTime,
                         });
                     }

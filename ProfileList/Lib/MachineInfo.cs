@@ -28,5 +28,10 @@ namespace ProfileList.Lib
                 ToArray();
             this.UserLogonSessions = UserLogonSession.GetLoggedOnSession();
         }
+
+        public void RefreshSessionInfo()
+        {
+            this.UserLogonSessions = UserLogonSession.GetLoggedOnSession();
+        }
     }
 }

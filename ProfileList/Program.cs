@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using ProfileList;
 using ProfileList.Lib;
 using System.Diagnostics;
@@ -16,7 +17,41 @@ app.MapGet("/api/profile/list", () =>
     return Item.UserProfileCollection;
 });
 
-app.MapGet("/api/info/machine", () =>
+app.MapGet("/api/session/list", () =>
+{
+    Item.MachineInfo.RefreshSessionInfo();
+    return new
+    {
+        Sessions = Item.MachineInfo.UserLogonSessions,
+    };
+});
+
+app.MapGet("/api/session/logoff", () =>
+{
+    Item.MachineInfo.UserLogonSessions.
+        ToList().
+        ForEach(x => x.Logoff());
+});
+
+app.MapGet("api/session/disconnect", () =>
+{
+    Item.MachineInfo.UserLogonSessions.
+        Where(x => x.ProtocolType == 2).
+        ToList().
+        ForEach(x => x.Disconnect());
+});
+
+app.MapGet("/api/system/refresh", () =>
+{
+    Item.MachineInfo = new();
+    Item.UserProfileCollection = new();
+    return new
+    {
+        Result = "OK"
+    };
+});
+
+app.MapGet("/api/system/info", () =>
 {
     return new
     {
@@ -27,31 +62,12 @@ app.MapGet("/api/info/machine", () =>
     };
 });
 
-app.MapGet("/api/info/session", () =>
-{
-    return new
-    {
-        Sessions = Item.MachineInfo.UserLogonSessions,
-    };
-});
-
-app.MapGet("/api/info/reflesh", () =>
-{
-    Item.MachineInfo = new();
-    Item.UserProfileCollection = new();
-    return new
-    {
-        Result = "OK"
-    };
-});
-
 app.MapGet("/api/system/close", () =>
 {
     Task.Run(() =>
     {
         Task.Delay(1000);
         app.StopAsync();
-
     });
     return new
     {
