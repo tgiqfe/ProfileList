@@ -1,4 +1,14 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Text;
+
+//  参考)
+//  https://stackoverflow.com/questions/32522545/retrieve-user-logontime-on-terminal-service-with-remote-desktop-services-api
+//  [WTS_INFO_CLASS]
+//  https://learn.microsoft.com/ja-jp/windows/win32/api/wtsapi32/ne-wtsapi32-wts_info_class
+//  [WTSINFOA]
+//  https://learn.microsoft.com/en-us/windows/win32/api/wtsapi32/ns-wtsapi32-wtsinfoa
 
 namespace ProfileList.Lib
 {
@@ -29,7 +39,6 @@ namespace ProfileList.Lib
         [DllImport("Wtsapi32.dll")]
         static extern bool WTSQuerySessionInformation(
             System.IntPtr hServer, int sessionId, WTS_INFO_CLASS wtsInfoClass, out System.IntPtr ppBuffer, out uint pBytesReturned);
-
 
         [DllImport("wtsapi32.dll", SetLastError = true)]
         static extern bool WTSDisconnectSession(IntPtr hServer, int sessionId, bool bWait);
@@ -94,6 +103,44 @@ namespace ProfileList.Lib
             WTSInit
         }
 
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+        struct WTSINFOA
+        {
+            const int WINSTATIONNAME_LENGTH = 32;
+            const int DOMAIN_LENGTH = 17;
+            const int USERNAME_LENGTH = 20;
+
+            private WTS_CONNECTSTATE_CLASS State;
+            private int SessionId;
+            private int IncomingBytes;
+            private int OutgoingBytes;
+            private int IncomingFrames;
+            private int OutgoingFrames;
+            private int IncomingCompressedBytes;
+            private int OutgoingCompressedBytes;
+
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = WINSTATIONNAME_LENGTH)]
+            private byte[] WinStationNameRaw;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = DOMAIN_LENGTH)]
+            private byte[] DomainRaw;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = USERNAME_LENGTH + 1)]
+            private byte[] UserNameRaw;
+            private long ConnectTimeUTC;
+            private long DisconnectTimeUTC;
+            private long LastInputTimeUTC;
+            private long LogonTimeUTC;
+            private long CurrentTimeUTC;
+
+            public string WinStationName { get { return Encoding.ASCII.GetString(WinStationNameRaw); } }
+            public string Domain { get { return Encoding.ASCII.GetString(DomainRaw); } }
+            public string UserName { get { return Encoding.ASCII.GetString(UserNameRaw); } }
+            public DateTime ConnectTime { get { return DateTime.FromFileTimeUtc(ConnectTimeUTC); } }
+            public DateTime DisconnectTime { get { return DateTime.FromFileTimeUtc(DisconnectTimeUTC); } }
+            public DateTime LastInputTime { get { return DateTime.FromFileTimeUtc(LastInputTimeUTC); } }
+            public DateTime LogonTime { get { return DateTime.FromFileTimeUtc(LogonTimeUTC); } }
+            public DateTime CurrentTime { get { return DateTime.FromFileTimeUtc(CurrentTimeUTC); } }
+        }
+
         #endregion
         #region Public Parameter
 
@@ -102,6 +149,8 @@ namespace ProfileList.Lib
         public int SessionID { get; set; }
         public string SessionType { get; set; }
         public string SessionState { get; set; }
+
+        public int ProtocolType { get; set; }
 
         #endregion
 
@@ -132,9 +181,13 @@ namespace ProfileList.Lib
                     IntPtr domainNamePtr = IntPtr.Zero;
                     IntPtr sessionTypePtr = IntPtr.Zero;
 
+                    IntPtr protocolTypePtr = IntPtr.Zero;
+
                     WTSQuerySessionInformation(serverHandle, si.SessionID, WTS_INFO_CLASS.WTSUserName, out userNamePtr, out bytes);
                     WTSQuerySessionInformation(serverHandle, si.SessionID, WTS_INFO_CLASS.WTSDomainName, out domainNamePtr, out bytes);
                     WTSQuerySessionInformation(serverHandle, si.SessionID, WTS_INFO_CLASS.WTSWinStationName, out sessionTypePtr, out bytes);
+
+                    WTSQuerySessionInformation(serverHandle, si.SessionID, WTS_INFO_CLASS.WTSClientProtocolType, out protocolTypePtr, out bytes);
 
                     list.Add(new UserLogonSession()
                     {
@@ -143,6 +196,7 @@ namespace ProfileList.Lib
                         SessionID = si.SessionID,
                         SessionType = Marshal.PtrToStringAnsi(sessionTypePtr),
                         SessionState = si.State.ToString(),
+                        ProtocolType = Marshal.ReadInt32(protocolTypePtr)
                     });
 
                     WTSFreeMemory(userNamePtr);

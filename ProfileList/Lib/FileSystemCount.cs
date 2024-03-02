@@ -65,11 +65,7 @@ namespace ProfileList.Lib
                     CountUp(subDir);
                 }
             }
-            catch (Exception e)
-            {
-                //Console.WriteLine(e);
-                Debug.WriteLine("[Error] " + di.FullName);
-            }
+            catch { }
         }
 
         public string GetSize()

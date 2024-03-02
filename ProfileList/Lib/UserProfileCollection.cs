@@ -17,7 +17,7 @@ namespace ProfileList.Lib
                 {
                     var sid = x["SID"] as string;
                     return !string.IsNullOrEmpty(sid) &&
-                        MachineInfo.SystemSIDs.All(y => y != sid);
+                        Item.MachineInfo.SystemSIDs.All(y => y != sid);
                 }).
                 Select(x => new UserProfile(x)).
                 ToArray();

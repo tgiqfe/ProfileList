@@ -5,9 +5,11 @@ using System.Diagnostics;
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
+Item.MachineInfo = new MachineInfo();
 UserProfileCollection collection = new();
 
-app.MapGet("/", () => "Hello World!");
+app.MapGet("/", () => "");
+app.MapPost("/", () => "");
 
 app.MapGet("/api/list", () =>
 {
@@ -18,14 +20,31 @@ app.MapGet("/api/machine", () =>
 {
     return new
     {
-        ComputerName = MachineInfo.ComputerName,
-        DomainName = MachineInfo.DomainName,
-        IsDomainMachine = MachineInfo.IsDomainMachine,
-        SystemSIDs = MachineInfo.SystemSIDs
+        ComputerName = Item.MachineInfo.ComputerName,
+        DomainName = Item.MachineInfo.DomainName,
+        IsDomainMachine = Item.MachineInfo.IsDomainMachine,
+        SystemSIDs = Item.MachineInfo.SystemSIDs
     };
-}); 
+});
+
+app.MapGet("/api/session", () =>
+{
+    return new
+    {
+        Sessions = Item.MachineInfo.UserLogonSessions,
+    };
+});
+
+app.MapGet("/api/reflesh", () =>
+{
+    Item.MachineInfo = new MachineInfo();
+    collection = new UserProfileCollection();
+    return new
+    {
+        Result = "OK"
+    };
+});
 
 
 
-
-app.Run();
+app.Run("http://*:5000");

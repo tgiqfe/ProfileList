@@ -4,71 +4,29 @@ namespace ProfileList.Lib
 {
     public class MachineInfo
     {
-        #region Private parameters
+        public string ComputerName { get; private set; }
+        public string DomainName { get; private set; }
+        public bool IsDomainMachine { get; private set; }   
+        public string[] SystemSIDs { get; private set; }
+        public IEnumerable<UserLogonSession> UserLogonSessions { get; private set; }
 
-        private static string _domainName = null;
-        private static bool? _isDomainMachine = false;
-        private static string[] _systemSIDs = null;
-        private static IEnumerable<UserLogonSession> _sessions = null;
-
-        #endregion
-
-        #region Public properties
-
-        public static string ComputerName
+        public MachineInfo()
         {
-            get
-            {
-                return Environment.MachineName;
-            }
+            this.ComputerName = Environment.MachineName;
+            this.DomainName = (new ManagementClass("Win32_ComputerSystem").
+                GetInstances().
+                OfType<ManagementObject>().
+                First())["Domain"] as string;
+            this.IsDomainMachine = (bool)(new ManagementClass("Win32_ComputerSystem").
+                GetInstances().
+                OfType<ManagementObject>().
+                First())["PartOfDomain"];
+            this.SystemSIDs = new ManagementClass("Win32_SystemAccount").
+                GetInstances().
+                OfType<ManagementObject>().
+                Select(x => x["SID"] as string).
+                ToArray();
+            this.UserLogonSessions = UserLogonSession.GetLoggedOnSession();
         }
-
-        public static string DomainName
-        {
-            get
-            {
-                _domainName ??= (new ManagementClass("Win32_ComputerSystem").
-                    GetInstances().
-                    OfType<ManagementObject>().
-                    First())["Domain"] as string;
-                return _domainName;
-            }
-        }
-
-        public static bool IsDomainMachine
-        {
-            get
-            {
-                _isDomainMachine ??= (bool)(new ManagementClass("Win32_ComputerSystem").
-                    GetInstances().
-                    OfType<ManagementObject>().
-                    First())["PartOfDomain"];
-                return _isDomainMachine ?? false;
-            }
-        }
-
-        public static string[] SystemSIDs
-        {
-            get
-            {
-                _systemSIDs ??= new ManagementClass("Win32_SystemAccount").
-                    GetInstances().
-                    OfType<ManagementObject>().
-                    Select(x => x["SID"] as string).
-                    ToArray();
-                return _systemSIDs;
-            }
-        }
-
-        public static IEnumerable<UserLogonSession> UserLogonSessions
-        {
-            get
-            {
-                _sessions ??= UserLogonSession.GetLoggedOnSession();
-                return _sessions;
-            }
-        }
-
-        #endregion
     }
 }
