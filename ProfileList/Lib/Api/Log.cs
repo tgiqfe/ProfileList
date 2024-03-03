@@ -4,6 +4,11 @@ namespace ProfileList.Lib.Api
 {
     public class Log
     {
+        /// <summary>
+        /// ログの出力
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
         public static IEnumerable<string> Print(LogParameter parameter = null)
         {
             try

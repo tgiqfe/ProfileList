@@ -13,66 +13,18 @@ var app = builder.Build();
 
 Item.Setting = Setting.Load();
 Item.MachineInfo = new();
-Item.UserLogonSessions = UserLogonSession.GetLoggedOnSession();
+Item.UserLogonSessionCollection = new();
 Item.UserProfileCollection = new();
 Item.Logger = new(Item.Setting.LogDirectory);
 
 #endregion
+
+Item.Logger.WriteLine("Start Service.");
 
 app.MapGet("/", () => "");
 app.MapPost("/", () => "");
 
 RoutingManager routing = new(app);
 routing.RegisterRoutes();
-
-app.MapPost("/api/user/test", async (HttpContext context) =>
-{
-    switch (context.Request.ContentType)
-    {
-        case "application/json":
-            Item.Logger.WriteLine("application/json");
-            using (var reader = new StreamReader(context.Request.Body))
-            {
-                var body = await reader.ReadToEndAsync();
-                var node = JsonNode.Parse(body);
-                var username = node["username"]?.ToString();
-                var password = node["password"]?.ToString();
-                var domainname = node["domain"]?.ToString();
-                Item.Logger.WriteLine($"{username} {password} {domainname}");
-            }
-            break;
-        case "application/x-www-form-urlencoded":
-            Item.Logger.WriteLine("application/x-www-form-urlencoded");
-            using (var reader = new StreamReader(context.Request.Body))
-            {
-                var body = await reader.ReadToEndAsync();
-                string username = "", password = "", domainname = "";
-                foreach (var parameter in body.Split("&"))
-                {
-                    var key = parameter.Substring(0, parameter.IndexOf("="));
-                    var val = parameter.Substring(parameter.IndexOf("=") + 1);
-                    switch (key)
-                    {
-                        case "username":
-                            username = val;
-                            break;
-                        case "password":
-                            password = val;
-                            break;
-                        case "domain":
-                            domainname = val;
-                            break;
-                    }
-                }
-                Item.Logger.WriteLine($"{username} {password} {domainname}");
-            }
-            break;
-    }
-
-    return new
-    {
-        Result = "OK"
-    };
-});
 
 app.Run($"http://*:{Item.Setting.Port}");

@@ -26,28 +26,16 @@ namespace ProfileList.Lib
                 return Api.User.Profile(await UserParameter.SetParamAsync(context));
             });
 
-
-
-
-
             //  ログイン中セッションの一覧を取得
             app.MapGet("/api/user/session", () =>
             {
                 Item.Logger.WriteLine("[GET]Get user logon sessions.");
-                Item.UserLogonSessions = Profile.UserLogonSession.GetLoggedOnSession();
-                return new
-                {
-                    Sessions = Item.UserLogonSessions,
-                };
+                return Api.User.Session();
             });
-            app.MapPost("/api/user/session", () =>
+            app.MapPost("/api/user/session", async (HttpContext context) =>
             {
                 Item.Logger.WriteLine("[POST]Get user logon sessions.");
-                Item.UserLogonSessions = Profile.UserLogonSession.GetLoggedOnSession();
-                return new
-                {
-                    Sessions = Item.UserLogonSessions,
-                };
+                return Api.User.Session(await UserParameter.SetParamAsync(context));
             });
 
 
@@ -145,8 +133,8 @@ namespace ProfileList.Lib
             app.MapGet("/api/user/logoff", () =>
             {
                 Item.Logger.WriteLine("[GET]User Logoff.");
-                Item.UserLogonSessions = Profile.UserLogonSession.GetLoggedOnSession();
-                Item.UserLogonSessions.
+                Item.UserLogonSessionCollection.Sessions = Profile.UserLogonSession.GetLoggedOnSession();
+                Item.UserLogonSessionCollection.Sessions.
                     ToList().
                     ForEach(x => x.Logoff());
                 return new
@@ -159,8 +147,8 @@ namespace ProfileList.Lib
             app.MapGet("api/user/disconnect", () =>
             {
                 Item.Logger.WriteLine("[GET]User Disconnect, from RDP.");
-                Item.UserLogonSessions = Profile.UserLogonSession.GetLoggedOnSession();
-                Item.UserLogonSessions.
+                Item.UserLogonSessionCollection.Sessions = Profile.UserLogonSession.GetLoggedOnSession();
+                Item.UserLogonSessionCollection.Sessions.
                     Where(x => x.ProtocolType == 2).
                     ToList().
                     ForEach(x => x.Disconnect());
@@ -172,7 +160,7 @@ namespace ProfileList.Lib
 
 
 
-            //  ログの出力 (無指定の場合は10行)
+            //  ログの出力
             app.MapGet("/api/log/print", () =>
             {
                 Item.Logger.Pause = true;
@@ -196,44 +184,32 @@ namespace ProfileList.Lib
                 };
             });
 
-
-
-
-
-
-
-
-            //  サーバ情報のリフレッシュ
-            app.MapGet("/api/server/refresh", () =>
-            {
-                Item.Logger.WriteLine("[GET]System Refresh.");
-                Item.MachineInfo = new();
-                Item.UserProfileCollection = new();
-                return new
-                {
-                    Result = "OK"
-                };
-            });
-
             //  サーバ情報の取得
             app.MapGet("/api/server/info", () =>
             {
                 Item.Logger.WriteLine("[GET]Get System Info.");
-                return new
-                {
-                    Item.MachineInfo,
-                };
+                return Api.Server.Info();
+            });
+            app.MapPost("/api/server/info", async (HttpContext context) =>
+            {
+                Item.Logger.WriteLine("[POST]Get System Info.");
+                return Api.Server.Info(await ServerParameter.SetParamAsync(context));
             });
 
             //  サーバのシャットダウン
             app.MapGet("/api/server/close", () =>
             {
                 Item.Logger.WriteLine("[GET]Close Application.");
-                Task.Run(() =>
+                Api.Server.Close(app);
+                return new
                 {
-                    Task.Delay(1000);
-                    app.StopAsync();
-                });
+                    Result = "OK"
+                };
+            });
+            app.MapPost("/api/server/close", (HttpContext context) =>
+            {
+                Item.Logger.WriteLine("[POST]Close Application.");
+                Api.Server.Close(app);
                 return new
                 {
                     Result = "OK"

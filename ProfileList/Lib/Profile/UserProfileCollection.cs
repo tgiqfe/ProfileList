@@ -5,11 +5,11 @@ namespace ProfileList.Lib.Profile
 {
     public class UserProfileCollection
     {
-        public UserProfile[] UserProfiles { get; set; }
+        public UserProfile[] Profiles { get; set; }
 
         public UserProfileCollection()
         {
-            UserProfiles = new ManagementClass("Win32_UserProfile").
+            this.Profiles = new ManagementClass("Win32_UserProfile").
                 GetInstances().
                 OfType<ManagementObject>().
                 Where(x =>
@@ -29,7 +29,7 @@ namespace ProfileList.Lib.Profile
         {
             string outputPath = "userprofiles.json";
             File.WriteAllText(outputPath,
-                JsonSerializer.Serialize(UserProfiles,
+                JsonSerializer.Serialize(this.Profiles,
                     new JsonSerializerOptions()
                     {
                         WriteIndented = true

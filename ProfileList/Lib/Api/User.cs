@@ -15,12 +15,19 @@ namespace ProfileList.Lib.Api
             if (parameter?.Refresh == true)
             {
                 Item.Logger.WriteLine("Refrsh, UserProfileCollectionl.");
-                Item.UserProfileCollection = new UserProfileCollection();
+                Item.UserProfileCollection = new();
             }
             return Item.UserProfileCollection;
         }
 
-
-
+        public static UserLogonSessionCollection Session(UserParameter parameter = null)
+        {
+            if (parameter?.Refresh == true)
+            {
+                Item.Logger.WriteLine("Refrsh, UserLogonSessionCollection.");
+                Item.UserLogonSessionCollection = new();
+            }
+            return Item.UserLogonSessionCollection;
+        }
     }
 }

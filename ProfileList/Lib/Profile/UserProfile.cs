@@ -39,7 +39,7 @@ namespace ProfileList.Lib.Profile
                 Caption = uamo["Caption"] as string;
                 IsDomainUser = !(bool)uamo["LocalAccount"];
                 UserDomain = uamo["Domain"] as string;
-                IsLogon = Item.UserLogonSessions.
+                IsLogon = Item.UserLogonSessionCollection.Sessions.
                     FirstOrDefault(x => x.UserName == UserName && x.UserDomain == UserDomain)?.IsActive() ?? false;
                 FileSystemCount = new FileSystemCount(ProfilePath, true);
             }
