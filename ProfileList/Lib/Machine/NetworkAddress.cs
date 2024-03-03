@@ -12,6 +12,7 @@ namespace ProfileList.Lib.Machine
     {
         public string IPAddress { get; private set; }
         public string SubnetMask { get; private set; }
+        public int Prefixlength { get; private set; }
         public string IPAddress_alias { get; private set; }
 
         public NetworkAddress() { }
@@ -19,7 +20,8 @@ namespace ProfileList.Lib.Machine
         {
             this.IPAddress = ip;
             this.SubnetMask = sm;
-            this.IPAddress_alias = $"{ip}/{GetPrefixLength(sm)}";
+            this.Prefixlength = GetPrefixLength(sm);
+            this.IPAddress_alias = $"{IPAddress}/{Prefixlength}";
         }
 
         public System.Net.IPAddress GetIPAddress()

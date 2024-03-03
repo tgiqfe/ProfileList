@@ -14,6 +14,7 @@ namespace ProfileList.Lib.Machine
 
         public NetworkAddress[] Addresses { get; set; }
         public string[] GatewayAddress { get; set; }
+        public string[] DNSServers { get; set; }
         public string MACAddress { get; set; }
         public string MACAddress_alias1 { get; set; }
         public string MACAddress_alias2 { get; set; }
@@ -33,6 +34,7 @@ namespace ProfileList.Lib.Machine
             this.Name = mo_adapter["NetConnectionID"] as string;
             this.Addresses = NetworkAddress.GetAddresses(mo_conf);
             this.GatewayAddress = mo_conf["DefaultIPGateway"] as string[];
+            this.DNSServers = mo_conf["DNSServerSearchOrder"] as string[];
             this.MACAddress = mo_adapter["MACAddress"] as string;
             this.MACAddress_alias1 = (mo_adapter["MACAddress"] as string).Replace(":", "-");
             this.MACAddress_alias2 = (mo_adapter["MACAddress"] as string).Replace(":", "").ToLower();
