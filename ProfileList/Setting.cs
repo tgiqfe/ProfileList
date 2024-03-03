@@ -6,13 +6,17 @@ namespace ProfileList
     {
         const string settingFile = "setting.json";
 
+        public int Port { get; set; }
         public string RLAgentPipeKey { get; set; }
         public string RLAgentMutexKey { get; set; }
+        public string LogDirectory { get; set; }
 
         public void Init()
         {
+            this.Port = 5000;
             this.RLAgentPipeKey = "____pipe____key____";
             this.RLAgentMutexKey = "Global\\____mutex____key____";
+            this.LogDirectory = "Logs";
             Save();
         }
 

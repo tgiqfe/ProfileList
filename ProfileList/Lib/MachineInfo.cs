@@ -6,7 +6,7 @@ namespace ProfileList.Lib
     {
         public string ComputerName { get; private set; }
         public string DomainName { get; private set; }
-        public bool IsDomainMachine { get; private set; }   
+        public bool IsDomainMachine { get; private set; }
         public string[] SystemSIDs { get; private set; }
 
         public MachineInfo()

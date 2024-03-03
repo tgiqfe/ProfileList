@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.Razor;
-using System.Management;
-using System.Net.NetworkInformation;
-using System.Runtime.InteropServices;
+﻿using System.Management;
 using System.Text.Json.Serialization;
 
 namespace ProfileList.Lib

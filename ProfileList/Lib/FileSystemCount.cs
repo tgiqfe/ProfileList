@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace ProfileList.Lib
+﻿namespace ProfileList.Lib
 {
     /// <summary>
     /// 対象フォルダー配下のファイル数、ディレクトリ数、サイズをカウントするクラス

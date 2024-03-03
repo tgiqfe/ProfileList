@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using System.Management;
+﻿using System.Management;
 using System.Text.Json;
 
 namespace ProfileList.Lib

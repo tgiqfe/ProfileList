@@ -1,6 +1,5 @@
 ﻿using Microsoft.Win32.SafeHandles;
 using System.IO.Pipes;
-using System.Reflection.Metadata;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Principal;

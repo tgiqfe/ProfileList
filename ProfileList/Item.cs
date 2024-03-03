@@ -10,5 +10,6 @@ namespace ProfileList
         public static MachineInfo MachineInfo = null;
         public static IEnumerable<UserLogonSession> UserLogonSessions = null;
         public static UserProfileCollection UserProfileCollection = null;
+        public static Logger Logger = null;
     }
 }
