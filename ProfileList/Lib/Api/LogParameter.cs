@@ -5,8 +5,9 @@ namespace ProfileList.Lib.Api
     public class LogParameter
     {
         public int? Line { get; set; }
+        public int? Request { get; set; }
         public bool? AllPrint { get; set; }
-
+        
         public static async Task<LogParameter> SetParamAsync(HttpContext context)
         {
             LogParameter parameter = null;
@@ -23,6 +24,7 @@ namespace ProfileList.Lib.Api
                     var node = JsonNode.Parse(body);
                     parameter = new();
                     parameter.Line = int.TryParse(node["line"]?.ToString(), out int line_1) ? line_1 : null;
+                    parameter.Request = int.TryParse(node["request"]?.ToString(), out int request_1) ? request_1 : null;
                     parameter.AllPrint = bool.TryParse(node["allprint"]?.ToString(), out bool allprint_1) ? allprint_1 : null;
                     break;
                 case "application/x-www-form-urlencoded":
@@ -36,6 +38,9 @@ namespace ProfileList.Lib.Api
                         {
                             case "line":
                                 parameter.Line = int.TryParse(val, out int line_2) ? line_2 : null;
+                                break;
+                            case "request":
+                                parameter.Request = int.TryParse(val, out int request_2) ? request_2 : null;
                                 break;
                             case "allprint":
                             case "all":

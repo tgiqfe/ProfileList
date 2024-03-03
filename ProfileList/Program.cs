@@ -13,6 +13,7 @@ var app = builder.Build();
 
 Item.Setting = Setting.Load();
 Item.MachineInfo = new();
+Item.NetworkProfile = new();
 Item.UserLogonSessionCollection = new();
 Item.UserProfileCollection = new();
 Item.Logger = new(Item.Setting.LogDirectory);

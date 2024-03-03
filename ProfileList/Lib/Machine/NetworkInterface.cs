@@ -23,7 +23,6 @@ namespace ProfileList.Lib.Machine
         public bool? DHCPEnabled { get; set; }
         public string DHCPServer { get; set; }
         public string[] DNSDomainSuffixSearchOrder { get; set; }
-        public int? InterfaceIndex { get; set; }
 
         public NetworkInterface(ManagementObject mo_conf, IEnumerable<ManagementBaseObject> mo_adapters)
         {
@@ -43,7 +42,6 @@ namespace ProfileList.Lib.Machine
             this.DHCPEnabled = bool.TryParse(mo_conf["DHCPEnabled"] as string, out bool b) ? b : null;
             this.DHCPServer = mo_conf["DHCPServer"] as string;
             this.DNSDomainSuffixSearchOrder = mo_conf["DNSDomainSuffixSearchOrder"] as string[];
-            this.InterfaceIndex = int.TryParse(mo_conf["InterfaceIndex"] as string, out int ii) ? ii : null;
         }
     }
 }

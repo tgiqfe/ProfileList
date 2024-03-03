@@ -184,7 +184,7 @@ namespace ProfileList.Lib
                 };
             });
 
-            //  サーバ情報の取得
+            //  マシン情報の取得
             app.MapGet("/api/server/info", () =>
             {
                 Item.Logger.WriteLine("[GET]Get System Info.");
@@ -195,6 +195,25 @@ namespace ProfileList.Lib
                 Item.Logger.WriteLine("[POST]Get System Info.");
                 return Api.Server.Info(await ServerParameter.SetParamAsync(context));
             });
+
+            //  サーバのネットワーク情報の取得
+            app.MapGet("/api/server/network", () =>
+            {
+                Item.Logger.WriteLine("[GET]Get Network Info.");
+                return new
+                {
+                    NetworkInterfaces = Api.Server.Network()
+                };
+            });
+            app.MapPost("/api/server/network", async (HttpContext context) =>
+            {
+                Item.Logger.WriteLine("[POST]Get Network Info.");
+                return new
+                {
+                    NetworkInterfaces = Api.Server.Network(await ServerParameter.SetParamAsync(context))
+                };
+            });
+
 
             //  サーバのシャットダウン
             app.MapGet("/api/server/close", () =>

@@ -22,8 +22,6 @@ namespace ProfileList.Lib.Machine
             }
         }
 
-        public NetworkProfile NetworkProfile { get; private set; }
-
         #endregion
 
         public MachineInfo()
@@ -42,7 +40,6 @@ namespace ProfileList.Lib.Machine
                 OfType<ManagementObject>().
                 Select(x => x["SID"] as string).
                 ToArray();
-            this.NetworkProfile = new();
         }
     }
 }

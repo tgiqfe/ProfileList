@@ -12,7 +12,7 @@
         {
             get
             {
-                _logFile ??= $"ProfileList_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.log";
+                _logFile ??= $"ProfileList_{DateTime.Now.ToString("yyyyMMdd")}.log";
                 return _logFile;
             }
         }

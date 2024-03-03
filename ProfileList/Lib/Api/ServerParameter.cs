@@ -5,6 +5,7 @@ namespace ProfileList.Lib.Api
     public class ServerParameter
     {
         public bool? Refresh { get; set; }
+        public bool? All { get; set; }
 
         public ServerParameter() { }
 
@@ -24,6 +25,7 @@ namespace ProfileList.Lib.Api
                     var node = JsonNode.Parse(body);
                     parameter = new();
                     parameter.Refresh = bool.TryParse(node["refresh"]?.ToString(), out bool refresh_1) ? refresh_1 : null;
+                    parameter.All = bool.TryParse(node["all"]?.ToString(), out bool all_1) ? all_1 : null;
                     break;
                 case "application/x-www-form-urlencoded":
                     Item.Logger.WriteLine("Content-Type: application/x-www-form-urlencoded");
@@ -36,6 +38,9 @@ namespace ProfileList.Lib.Api
                         {
                             case "refresh":
                                 parameter.Refresh = bool.TryParse(val, out bool refresh_2) ? refresh_2 : null;
+                                break;
+                            case "all":
+                                parameter.All = bool.TryParse(val, out bool all_2) ? all_2 : null;
                                 break;
                         }
                     }

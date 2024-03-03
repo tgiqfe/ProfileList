@@ -88,16 +88,69 @@ rem # ログを取得 (POST, 全ログ出力)
 curl -X POST %SERVER_URL%:%SERVER_PORT%/api/log/print ^
     -d "allprint=true" | jq
 
+rem # ログを取得 (POST, JSONで値渡し, 最後20行)
+curl -X POST %SERVER_URL%:%SERVER_PORT%/api/log/print ^
+  -H "Content-Type: application/json" ^
+  -d "{ \"line\": 5 }" | jq
+
+rem # ログを取得 (POST, JSONで値渡し, 最後5行, 全ログ出力)
+curl -X POST %SERVER_URL%:%SERVER_PORT%/api/log/print ^
+  -H "Content-Type: application/json" ^
+  -d "{ \"line\": 5, \"allprint\": true }" | jq
+
+rem # ログを取得 (POST, 最後のReqesut 1回分のみ出力)
+curl -X POST %SERVER_URL%:%SERVER_PORT%/api/log/print ^
+  -d "request=1" | jq
+
+rem # ログを取得 (POST, JSONで値渡し, 最後のReqesut 3回分のみ出力)
+curl -X POST %SERVER_URL%:%SERVER_PORT%/api/log/print ^
+  -H "Content-Type: application/json" ^
+  -d "{ \"request\": 3 }" | jq
+
 
 rem # =========================================================
 rem # サーバ情報の取得
 rem # =========================================================
-rem # サーバ情報の取得 (GETメソッド)
+rem # マシン情報の取得 (GETメソッド)
 curl -X GET %SERVER_URL%:%SERVER_PORT%/api/server/info | jq
 
-rem # サーバ情報の取得 (POSTメソッド)
+rem # マシン情報の取得 (POSTメソッド)
 curl -X POST %SERVER_URL%:%SERVER_PORT%/api/server/info | jq
 
+
+rem # =========================================================
+rem # ネットワーク情報の取得
+rem # =========================================================
+rem # ネットワークアドレス情報の取得 (GETメソッド)
+curl -X GET %SERVER_URL%:%SERVER_PORT%/api/server/network | jq
+
+rem # ネットワークアドレス情報の取得 (POSTメソッド)
+curl -X POST %SERVER_URL%:%SERVER_PORT%/api/server/network | jq
+
+rem # ネットワークアドレス情報の取得 (POSTメソッド, Refresh = true)
+curl -X POST %SERVER_URL%:%SERVER_PORT%/api/server/network ^
+  -d "refresh=true" | jq
+
+rem # ネットワークアドレス情報の取得 (POSTメソッド, Refresh = false)
+curl -X POST %SERVER_URL%:%SERVER_PORT%/api/server/network ^
+  -d "refresh=false" | jq
+
+rem # ネットワークアドレス情報の取得
+rem # (POSTメソッド, Refresh = false, All = true)
+curl -X POST %SERVER_URL%:%SERVER_PORT%/api/server/network ^
+  -d "refresh=false&all=true" | jq
+
+rem # ネットワークアドレス情報の取得
+rem # (POSTメソッド, JSONで値渡し, Refresh = false, All = false)
+curl -X POST %SERVER_URL%:%SERVER_PORT%/api/server/network ^
+  -H "Content-Type: application/json" ^
+  -d "{ \"refresh\": false, \"all\": false }" | jq
+
+rem # ネットワークアドレス情報の取得
+rem # (POSTメソッド, JSONで値渡し, Refresh = false, All = true)
+curl -X POST %SERVER_URL%:%SERVER_PORT%/api/server/network ^
+  -H "Content-Type: application/json" ^
+  -d "{ \"refresh\": false, \"all\": true }" | jq
 
 rem # =========================================================
 rem # 終了
