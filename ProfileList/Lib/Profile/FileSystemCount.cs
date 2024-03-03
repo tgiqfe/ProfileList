@@ -1,4 +1,4 @@
-﻿namespace ProfileList.Lib
+﻿namespace ProfileList.Lib.Profile
 {
     /// <summary>
     /// 対象フォルダー配下のファイル数、ディレクトリ数、サイズをカウントするクラス
@@ -20,7 +20,7 @@
 
             if (string.IsNullOrEmpty(targetPath) || !Directory.Exists(targetPath))
             {
-                this.IsFinished = true;
+                IsFinished = true;
             }
 
             if (countStart)
@@ -31,24 +31,24 @@
 
         public async void CountStartAsync()
         {
-            if (this.IsFinished) return;
+            if (IsFinished) return;
             await Task.Run(() =>
             {
                 CountUp(new DirectoryInfo(_targetPath));
-                this.IsFinished = true;
+                IsFinished = true;
             });
         }
 
         public void CountStart()
         {
-            if (this.IsFinished) return;
+            if (IsFinished) return;
             CountUp(new DirectoryInfo(_targetPath));
-            this.IsFinished = true;
+            IsFinished = true;
         }
 
         private void CountUp(DirectoryInfo di)
         {
-            this.DirectoryCount++;
+            DirectoryCount++;
             if ((di.Attributes & FileAttributes.ReparsePoint) == FileAttributes.ReparsePoint)
             {
                 return;
@@ -56,8 +56,8 @@
             try
             {
                 var files = di.GetFiles();
-                this.FileCount += files.Length;
-                this.Size += files.Select(x => x.Length).Sum();
+                FileCount += files.Length;
+                Size += files.Select(x => x.Length).Sum();
                 foreach (var subDir in di.GetDirectories())
                 {
                     CountUp(subDir);
@@ -70,21 +70,21 @@
         {
             if (Size < 1024)
             {
-                return $"{this.Size}B";
+                return $"{Size}B";
             }
             else if (Size < 1024 * 1024)
             {
-                var size = Math.Round((double)this.Size / 1024, 2, MidpointRounding.AwayFromZero);
+                var size = Math.Round((double)Size / 1024, 2, MidpointRounding.AwayFromZero);
                 return $"{size}KB";
             }
             else if (Size < 1024 * 1024 * 1024)
             {
-                var size = Math.Round((double)this.Size / 1024 / 1024, 2, MidpointRounding.AwayFromZero);
+                var size = Math.Round((double)Size / 1024 / 1024, 2, MidpointRounding.AwayFromZero);
                 return $"{size}MB";
             }
             else
             {
-                var size = Math.Round((double)this.Size / 1024 / 1024 / 1024, 2, MidpointRounding.AwayFromZero);
+                var size = Math.Round((double)Size / 1024 / 1024 / 1024, 2, MidpointRounding.AwayFromZero);
                 return $"{size}GB";
             }
         }

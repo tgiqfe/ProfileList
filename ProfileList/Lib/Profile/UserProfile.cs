@@ -1,7 +1,7 @@
 ﻿using System.Management;
 using System.Text.Json.Serialization;
 
-namespace ProfileList.Lib
+namespace ProfileList.Lib.Profile
 {
     public class UserProfile
     {
@@ -19,29 +19,29 @@ namespace ProfileList.Lib
 
         public UserProfile(ManagementObject mo)
         {
-            this.Extension = mo;
-            this.SID = mo["SID"] as string;
-            this.ProfilePath = mo["LocalPath"] as string;
+            Extension = mo;
+            SID = mo["SID"] as string;
+            ProfilePath = mo["LocalPath"] as string;
 
             var uamo = new ManagementClass("Win32_UserAccount").
                 GetInstances().
                 OfType<ManagementObject>().
-                Where(x => x["SID"] as string == this.SID).
-                FirstOrDefault(x => x["SID"] as string == this.SID);
+                Where(x => x["SID"] as string == SID).
+                FirstOrDefault(x => x["SID"] as string == SID);
             if (uamo == null)
             {
-                this.UserName = "-";
-                this.Caption = "不明なアカウント";
+                UserName = "-";
+                Caption = "不明なアカウント";
             }
             else
             {
-                this.UserName = uamo["Name"] as string;
-                this.Caption = uamo["Caption"] as string;
-                this.IsDomainUser = !(bool)uamo["LocalAccount"];
-                this.UserDomain = uamo["Domain"] as string;
-                this.IsLogon = Item.UserLogonSessions.
-                    FirstOrDefault(x => x.UserName == this.UserName && x.UserDomain == this.UserDomain)?.IsActive() ?? false;
-                this.FileSystemCount = new FileSystemCount(this.ProfilePath, true);
+                UserName = uamo["Name"] as string;
+                Caption = uamo["Caption"] as string;
+                IsDomainUser = !(bool)uamo["LocalAccount"];
+                UserDomain = uamo["Domain"] as string;
+                IsLogon = Item.UserLogonSessions.
+                    FirstOrDefault(x => x.UserName == UserName && x.UserDomain == UserDomain)?.IsActive() ?? false;
+                FileSystemCount = new FileSystemCount(ProfilePath, true);
             }
         }
     }

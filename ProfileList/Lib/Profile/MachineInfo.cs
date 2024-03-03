@@ -1,6 +1,6 @@
 ﻿using System.Management;
 
-namespace ProfileList.Lib
+namespace ProfileList.Lib.Profile
 {
     public class MachineInfo
     {
@@ -11,16 +11,16 @@ namespace ProfileList.Lib
 
         public MachineInfo()
         {
-            this.ComputerName = Environment.MachineName;
-            this.DomainName = (new ManagementClass("Win32_ComputerSystem").
+            ComputerName = Environment.MachineName;
+            DomainName = new ManagementClass("Win32_ComputerSystem").
                 GetInstances().
                 OfType<ManagementObject>().
-                First())["Domain"] as string;
-            this.IsDomainMachine = (bool)(new ManagementClass("Win32_ComputerSystem").
+                First()["Domain"] as string;
+            IsDomainMachine = (bool)new ManagementClass("Win32_ComputerSystem").
                 GetInstances().
                 OfType<ManagementObject>().
-                First())["PartOfDomain"];
-            this.SystemSIDs = new ManagementClass("Win32_SystemAccount").
+                First()["PartOfDomain"];
+            SystemSIDs = new ManagementClass("Win32_SystemAccount").
                 GetInstances().
                 OfType<ManagementObject>().
                 Select(x => x["SID"] as string).

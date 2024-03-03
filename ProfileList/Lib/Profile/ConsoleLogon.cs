@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Principal;
 
-namespace ProfileList.Lib
+namespace ProfileList.Lib.Profile
 {
     public class ConsoleLogon
     {
@@ -13,11 +13,11 @@ namespace ProfileList.Lib
         #region CheckLogonUser
 
         [DllImport("advapi32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-        private static extern bool LogonUser(String lpszUsername, String lpszDomain, String lpszPassword,
+        private static extern bool LogonUser(string lpszUsername, string lpszDomain, string lpszPassword,
             int dwLogonType, int dwLogonProvider, out SafeTokenHandle phToken);
 
         [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
-        private extern static bool CloseHandle(IntPtr handle);
+        private extern static bool CloseHandle(nint handle);
 
         private static bool GetImpersonationContext(string userName, string domainName, string password)
         {
@@ -42,7 +42,7 @@ namespace ProfileList.Lib
             //[ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
             [SuppressUnmanagedCodeSecurity]
             [return: MarshalAs(UnmanagedType.Bool)]
-            private static extern bool CloseHandle(IntPtr handle);
+            private static extern bool CloseHandle(nint handle);
 
             protected override bool ReleaseHandle()
             {

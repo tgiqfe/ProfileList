@@ -6,7 +6,7 @@ using System.Text;
 //  [WTSINFOA]
 //  https://learn.microsoft.com/en-us/windows/win32/api/wtsapi32/ns-wtsapi32-wtsinfoa
 
-namespace ProfileList.Lib
+namespace ProfileList.Lib.Profile
 {
     /// <summary>
     /// ユーザーログオン情報を管理
@@ -16,38 +16,38 @@ namespace ProfileList.Lib
         #region Static Parameter
 
         [DllImport("wtsapi32.dll", SetLastError = true)]
-        static extern IntPtr WTSOpenServer(string pServerName);
+        static extern nint WTSOpenServer(string pServerName);
 
         [DllImport("wtsapi32.dll")]
-        static extern void WTSCloseServer(IntPtr hServer);
+        static extern void WTSCloseServer(nint hServer);
 
         [DllImport("wtsapi32.dll", SetLastError = true)]
         static extern int WTSEnumerateSessions(
-                System.IntPtr hServer,
+                nint hServer,
                 int Reserved,
                 int Version,
-                ref System.IntPtr ppSessionInfo,
+                ref nint ppSessionInfo,
                 ref int pCount);
 
         [DllImport("wtsapi32.dll", ExactSpelling = true, SetLastError = false)]
-        public static extern void WTSFreeMemory(IntPtr memory);
+        public static extern void WTSFreeMemory(nint memory);
 
         [DllImport("Wtsapi32.dll")]
         static extern bool WTSQuerySessionInformation(
-            System.IntPtr hServer, int sessionId, WTS_INFO_CLASS wtsInfoClass, out System.IntPtr ppBuffer, out uint pBytesReturned);
+            nint hServer, int sessionId, WTS_INFO_CLASS wtsInfoClass, out nint ppBuffer, out uint pBytesReturned);
 
         [DllImport("wtsapi32.dll", SetLastError = true)]
-        static extern bool WTSDisconnectSession(IntPtr hServer, int sessionId, bool bWait);
+        static extern bool WTSDisconnectSession(nint hServer, int sessionId, bool bWait);
 
         [DllImport("wtsapi32.dll", SetLastError = true)]
-        static extern bool WTSLogoffSession(IntPtr hServer, int SessionId, bool bWait);
+        static extern bool WTSLogoffSession(nint hServer, int SessionId, bool bWait);
 
         [StructLayout(LayoutKind.Sequential)]
         struct WTS_SESSION_INFO
         {
-            public Int32 SessionID;
+            public int SessionID;
             [MarshalAs(UnmanagedType.LPStr)]
-            public String pWinStationName;
+            public string pWinStationName;
             public WTS_CONNECTSTATE_CLASS State;
         }
 
@@ -158,26 +158,26 @@ namespace ProfileList.Lib
         {
             List<UserLogonSession> list = new List<UserLogonSession>();
 
-            IntPtr serverHandle = WTSOpenServer(Environment.MachineName);
-            IntPtr buffer = IntPtr.Zero;
+            nint serverHandle = WTSOpenServer(Environment.MachineName);
+            nint buffer = nint.Zero;
             int count = 0;
             int retVal = WTSEnumerateSessions(serverHandle, 0, 1, ref buffer, ref count);
             int dataSize = Marshal.SizeOf(typeof(WTS_SESSION_INFO));
-            IntPtr current = buffer;
+            nint current = buffer;
             uint bytes = 0;
 
             if (retVal != 0)
             {
                 for (int i = 0; i < count; i++)
                 {
-                    WTS_SESSION_INFO si = (WTS_SESSION_INFO)Marshal.PtrToStructure((IntPtr)current, typeof(WTS_SESSION_INFO));
+                    WTS_SESSION_INFO si = (WTS_SESSION_INFO)Marshal.PtrToStructure(current, typeof(WTS_SESSION_INFO));
                     current += dataSize;
 
-                    IntPtr userNamePtr = IntPtr.Zero;
-                    IntPtr domainNamePtr = IntPtr.Zero;
-                    IntPtr sessionTypePtr = IntPtr.Zero;
-                    IntPtr protocolTypePtr = IntPtr.Zero;
-                    IntPtr wtsinfoPtr = IntPtr.Zero;
+                    nint userNamePtr = nint.Zero;
+                    nint domainNamePtr = nint.Zero;
+                    nint sessionTypePtr = nint.Zero;
+                    nint protocolTypePtr = nint.Zero;
+                    nint wtsinfoPtr = nint.Zero;
 
                     WTSQuerySessionInformation(serverHandle, si.SessionID, WTS_INFO_CLASS.WTSUserName, out userNamePtr, out bytes);
                     WTSQuerySessionInformation(serverHandle, si.SessionID, WTS_INFO_CLASS.WTSDomainName, out domainNamePtr, out bytes);
@@ -220,7 +220,7 @@ namespace ProfileList.Lib
         /// <returns></returns>
         public bool Disconnect()
         {
-            IntPtr serverHandle = WTSOpenServer(Environment.MachineName);
+            nint serverHandle = WTSOpenServer(Environment.MachineName);
             bool result = WTSDisconnectSession(serverHandle, SessionID, false);
             WTSCloseServer(serverHandle);
             return result;
@@ -232,7 +232,7 @@ namespace ProfileList.Lib
         /// <returns></returns>
         public bool Logoff()
         {
-            IntPtr serverHandle = WTSOpenServer(Environment.MachineName);
+            nint serverHandle = WTSOpenServer(Environment.MachineName);
             bool result = WTSLogoffSession(serverHandle, SessionID, false);
             WTSCloseServer(serverHandle);
             return result;

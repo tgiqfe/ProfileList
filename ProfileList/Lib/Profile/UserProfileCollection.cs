@@ -1,7 +1,7 @@
 ﻿using System.Management;
 using System.Text.Json;
 
-namespace ProfileList.Lib
+namespace ProfileList.Lib.Profile
 {
     public class UserProfileCollection
     {
@@ -9,7 +9,7 @@ namespace ProfileList.Lib
 
         public UserProfileCollection()
         {
-            this.UserProfiles = new ManagementClass("Win32_UserProfile").
+            UserProfiles = new ManagementClass("Win32_UserProfile").
                 GetInstances().
                 OfType<ManagementObject>().
                 Where(x =>
@@ -22,11 +22,14 @@ namespace ProfileList.Lib
                 ToArray();
         }
 
+        /// <summary>
+        /// ユーザープロファイルの情報を保存
+        /// </summary>
         public void Save()
         {
             string outputPath = "userprofiles.json";
             File.WriteAllText(outputPath,
-                JsonSerializer.Serialize(this.UserProfiles,
+                JsonSerializer.Serialize(UserProfiles,
                     new JsonSerializerOptions()
                     {
                         WriteIndented = true

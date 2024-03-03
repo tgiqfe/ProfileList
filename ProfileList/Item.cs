@@ -1,4 +1,4 @@
-﻿using ProfileList.Lib;
+﻿using ProfileList.Lib.Profile;
 using System.Diagnostics;
 
 namespace ProfileList
