@@ -42,7 +42,15 @@ rem # =========================================================
 rem # プロファイルの削除
 rem # =========================================================
 
+rem # プロファイルの削除 (指定ユーザーのプロファイルを削除)
+rem # ※Protectedプロファイルは除外
+curl -X POST %SERVER_URL%:%SERVER_PORT%/api/profile/delete ^
+  -d "username=Test001" | jq
 
+rem # プロファイルの削除 (全ユーザーのプロファイルを削除)
+rem # ※Protectedプロファイルは除外
+curl -X POST %SERVER_URL%:%SERVER_PORT%/api/profile/delete ^
+  -d "all=true" | jq
 
 rem # =========================================================
 rem # ログイン中セッションの一覧を取得

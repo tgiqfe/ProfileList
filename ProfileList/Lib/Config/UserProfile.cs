@@ -44,5 +44,10 @@ namespace ProfileList.Lib.Profile
                 FileSystemCount = new FileSystemCount(ProfilePath, true);
             }
         }
+
+        public void Delete()
+        {
+            this.Extension.Delete();
+        }
     }
 }

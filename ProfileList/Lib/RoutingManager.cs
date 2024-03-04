@@ -18,12 +18,19 @@ namespace ProfileList.Lib
             app.MapGet("/api/profile/list", () =>
             {
                 Item.Logger.WriteLine("[GET]Get user profile list.");
-                return Api.User.List();
+                return Api.Profile.List();
             });
             app.MapPost("/api/profile/list", async (HttpContext context) =>
             {
                 Item.Logger.WriteLine("[POST]Get user profile list.");
-                return Api.User.List(await UserParameter.SetParamAsync(context));
+                return Api.Profile.List(await ProfileParameter.SetParamAsync(context));
+            });
+
+            //  プロファイルを削除
+            app.MapPost("/api/profile/delete", async (HttpContext context) =>
+            {
+                Item.Logger.WriteLine("[POST]Delete user profile.");
+                return Api.Profile.Delete(await ProfileParameter.SetParamAsync(context));
             });
 
             //  ログイン中セッションの一覧を取得
