@@ -10,6 +10,7 @@ namespace ProfileList.Lib.Api
 
         public LogParameter() { }
 
+        /*
         public static async Task<LogParameter> SetParamAsync(HttpContext context)
         {
             LogParameter parameter = null;
@@ -58,6 +59,6 @@ namespace ProfileList.Lib.Api
 
             return parameter;
         }
-
+        */
     }
 }

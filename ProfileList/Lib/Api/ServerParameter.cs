@@ -9,6 +9,7 @@ namespace ProfileList.Lib.Api
 
         public ServerParameter() { }
 
+        /*
         public static async Task<ServerParameter> SetParamAsync(HttpContext context)
         {
             ServerParameter parameter = null;
@@ -52,5 +53,6 @@ namespace ProfileList.Lib.Api
 
             return parameter;
         }
+        */
     }
 }

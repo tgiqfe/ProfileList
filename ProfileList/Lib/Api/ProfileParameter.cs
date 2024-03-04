@@ -10,6 +10,7 @@ namespace ProfileList.Lib.Api
 
         public ProfileParameter() { }
 
+        /*
         public static async Task<ProfileParameter> SetParamAsync(HttpContext context)
         {
             ProfileParameter parameter = null;
@@ -56,5 +57,6 @@ namespace ProfileList.Lib.Api
             }
             return parameter;
         }
+        */
     }
 }
