@@ -67,6 +67,27 @@ curl -X POST %SERVER_URL%:%SERVER_PORT%/api/user/session ^
   -d "{ \"refresh\": true }" | jq
 
 
+
+
+rem # =========================================================
+rem # RDPセッションを切断
+rem # =========================================================
+
+rem # 全RDPセッションを切断 (GETメソッド)
+curl -X GET %SERVER_URL%:%SERVER_PORT%/api/user/disconnect | jq
+
+rem # 全RDPセッションを切断 (POSTメソッド)
+curl -X POST %SERVER_URL%:%SERVER_PORT%/api/user/disconnect | jq
+
+rem # 全RDPセッションを切断 (POSTメソッド, Administratorのみ切断)
+curl -X POST %SERVER_URL%:%SERVER_PORT%/api/user/disconnect ^
+  -d "username=Administrator" | jq
+
+rem # 全RDPセッションを切断 (POSTメソッド, Administratorのみ切断, ドメイン指定有り)
+curl -X POST %SERVER_URL%:%SERVER_PORT%/api/user/disconnect ^
+  -d "username=Administrator&domainname=EXAMPLE-DOMAIN" | jq
+
+
 rem # =========================================================
 rem # ログを取得
 rem # =========================================================
@@ -78,15 +99,15 @@ curl -X POST %SERVER_URL%:%SERVER_PORT%/api/log/print | jq
 
 rem # ログを取得 (POST, 最後1行)
 curl -X POST %SERVER_URL%:%SERVER_PORT%/api/log/print ^
-    -d "line=1" | jq
+  -d "line=1" | jq
 
 rem # ログを取得 (POST, 最後20行)
 curl -X POST %SERVER_URL%:%SERVER_PORT%/api/log/print ^
-    -d "line=20" | jq
+  -d "line=20" | jq
 
 rem # ログを取得 (POST, 全ログ出力)
 curl -X POST %SERVER_URL%:%SERVER_PORT%/api/log/print ^
-    -d "allprint=true" | jq
+  -d "allprint=true" | jq
 
 rem # ログを取得 (POST, JSONで値渡し, 最後20行)
 curl -X POST %SERVER_URL%:%SERVER_PORT%/api/log/print ^

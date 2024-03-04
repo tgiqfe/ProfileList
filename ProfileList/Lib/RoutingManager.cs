@@ -147,18 +147,13 @@ namespace ProfileList.Lib
             app.MapGet("api/user/disconnect", () =>
             {
                 Item.Logger.WriteLine("[GET]User Disconnect, from RDP.");
-                Item.UserLogonSessionCollection.Sessions = Profile.UserLogonSession.GetLoggedOnSession();
-                Item.UserLogonSessionCollection.Sessions.
-                    Where(x => x.ProtocolType == 2).
-                    ToList().
-                    ForEach(x => x.Disconnect());
-                return new
-                {
-                    Result = "OK"
-                };
+                return Api.User.Disconnect();
             });
-
-
+            app.MapPost("api/user/disconnect", async (HttpContext context) =>
+            {
+                Item.Logger.WriteLine("[POST]User Disconnect, from RDP.");
+                return Api.User.Disconnect(await UserParameter.SetParamAsync(context));
+            });
 
             //  ログの出力
             app.MapGet("/api/log/print", () =>
