@@ -15,37 +15,43 @@ rem # =========================================================
 rem # プロファイル一覧を取得
 rem # =========================================================
 rem # 通常どおりのGETリクエスト
-curl -X GET %SERVER_URL%:%SERVER_PORT%/api/user/profile | jq
+curl -X GET %SERVER_URL%:%SERVER_PORT%/api/profile/list | jq
 
 rem # 何も指定しないPOSTリクスト
-curl -X POST %SERVER_URL%:%SERVER_PORT%/api/user/profile | jq
+curl -X POST %SERVER_URL%:%SERVER_PORT%/api/profile/list | jq
 
 rem # 値を渡すPOSTリクエスト (Refresh = true)
-curl -X POST %SERVER_URL%:%SERVER_PORT%/api/user/profile ^
+curl -X POST %SERVER_URL%:%SERVER_PORT%/api/profile/list ^
   -d "refresh=true" | jq
 
 rem # 値を渡すPOSTリクエスト (Refresh = false)
-curl -X POST %SERVER_URL%:%SERVER_PORT%/api/user/profile ^
+curl -X POST %SERVER_URL%:%SERVER_PORT%/api/profile/list ^
   -d "refresh=false" | jq
 
 rem # JSONで値を渡すPOSTリクエスト (Refresh = true)
-curl -X POST %SERVER_URL%:%SERVER_PORT%/api/user/profile ^
+curl -X POST %SERVER_URL%:%SERVER_PORT%/api/profile/list ^
   -H "Content-Type: application/json" ^
   -d "{ \"refresh\": true }" | jq
 
 rem # JSONで値を渡すPOSTリクエスト (Refresh = false)
-curl -X POST %SERVER_URL%:%SERVER_PORT%/api/user/profile ^
+curl -X POST %SERVER_URL%:%SERVER_PORT%/api/profile/list ^
   -H "Content-Type: application/json" ^
   -d "{ \"refresh\": false }" | jq
 
+rem # =========================================================
+rem # プロファイルの削除
+rem # =========================================================
+
+
 
 rem # =========================================================
 rem # ログイン中セッションの一覧を取得
 rem # =========================================================
-rem # ログイン中セッションの一覧を取得
+
+rem # ログイン中セッションの一覧を取得(GETメソッド)
 curl -X GET %SERVER_URL%:%SERVER_PORT%/api/user/session | jq
 
-rem # ログイン中セッションの一覧を取得
+rem # ログイン中セッションの一覧を取得(POSTメソッド)
 curl -X POST %SERVER_URL%:%SERVER_PORT%/api/user/session | jq
 
 rem # ログイン中セッションの一覧を取得 (Refresh = false)
@@ -66,8 +72,41 @@ curl -X POST %SERVER_URL%:%SERVER_PORT%/api/user/session ^
   -H "Content-Type: application/json" ^
   -d "{ \"refresh\": true }" | jq
 
+rem # =========================================================
+rem # ユーザーのログオン
+rem # =========================================================
+
+rem # 指定したユーザーでログオン
+curl -X POST %SERVER_URL%:%SERVER_PORT%/api/user/logon ^
+  -d "username=Administrator&password=Password" | jq
+
+rem # 指定したユーザーでログオン (ドメイン指定有り)
+curl -X POST %SERVER_URL%:%SERVER_PORT%/api/user/logon ^
+  -d "username=Administrator&password=Password&domainname=EXAMPLE-DOMAIN" | jq
+
+rem # 指定したユーザーでログオン (JSONで値渡し)
+curl -X POST %SERVER_URL%:%SERVER_PORT%/api/user/logon ^
+  -H "Content-Type: application/json" ^
+  -d "{ \"username\": \"Administrator\", \"password\": \"Password\", \"domainname\": \"EXAMPLE-DOMAIN\" }" | jq
 
 
+rem # =========================================================
+rem # ログイン中のセッションをログオフ
+rem # =========================================================
+
+rem # 全RDPセッションをログオフ (GETメソッド)
+curl -X GET %SERVER_URL%:%SERVER_PORT%/api/user/logoff | jq
+
+rem # 全RDPセッションをログオフ (POSTメソッド)
+curl -X POST %SERVER_URL%:%SERVER_PORT%/api/user/logoff | jq
+
+rem # 指定したユーザーのセッションをログオフ (POSTメソッド, Administratorのみログオフ)
+curl -X POST %SERVER_URL%:%SERVER_PORT%/api/user/logoff ^
+  -d "username=Administrator" | jq
+
+rem # 指定したユーザーのセッションをログオフ (POSTメソッド, Administratorのみログオフ, ドメイン指定有り)
+curl -X POST %SERVER_URL%:%SERVER_PORT%/api/user/logoff ^
+  -d "username=Administrator&domainname=s" | jq
 
 rem # =========================================================
 rem # RDPセッションを切断
@@ -79,11 +118,11 @@ curl -X GET %SERVER_URL%:%SERVER_PORT%/api/user/disconnect | jq
 rem # 全RDPセッションを切断 (POSTメソッド)
 curl -X POST %SERVER_URL%:%SERVER_PORT%/api/user/disconnect | jq
 
-rem # 全RDPセッションを切断 (POSTメソッド, Administratorのみ切断)
+rem # 指定したRDPセッションを切断 (POSTメソッド, Administratorのみ切断)
 curl -X POST %SERVER_URL%:%SERVER_PORT%/api/user/disconnect ^
   -d "username=Administrator" | jq
 
-rem # 全RDPセッションを切断 (POSTメソッド, Administratorのみ切断, ドメイン指定有り)
+rem # 指定したRDPセッションを切断 (POSTメソッド, Administratorのみ切断, ドメイン指定有り)
 curl -X POST %SERVER_URL%:%SERVER_PORT%/api/user/disconnect ^
   -d "username=Administrator&domainname=EXAMPLE-DOMAIN" | jq
 

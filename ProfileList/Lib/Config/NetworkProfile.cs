@@ -1,7 +1,7 @@
 ﻿
 using System.Management;
 
-namespace ProfileList.Lib.Machine
+namespace ProfileList.Lib.Config
 {
     public class NetworkProfile
     {
@@ -12,7 +12,7 @@ namespace ProfileList.Lib.Machine
             var mo_adapters = new ManagementClass("Win32_NetworkAdapter").
                 GetInstances().
                 OfType<ManagementObject>();
-            this.Interfaces = new ManagementClass("Win32_NetworkAdapterConfiguration").
+            Interfaces = new ManagementClass("Win32_NetworkAdapterConfiguration").
                 GetInstances().
                 OfType<ManagementObject>().
                 Where(mo => (bool)mo["IPEnabled"]).

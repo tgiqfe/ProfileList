@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace ProfileList.Lib.Machine
+namespace ProfileList.Lib.Config
 {
     public class NetworkInterface
     {
@@ -31,19 +31,19 @@ namespace ProfileList.Lib.Machine
             var mo_adapter = mo_adapters.
                 FirstOrDefault(mo => (string)mo["GUID"] == guid);
 
-            this.Name = mo_adapter["NetConnectionID"] as string;
-            this.Addresses = NetworkAddress.GetAddresses(mo_conf);
-            this.GatewayAddress = mo_conf["DefaultIPGateway"] as string[];
-            this.DNSServers = mo_conf["DNSServerSearchOrder"] as string[];
-            this.MACAddress = mo_adapter["MACAddress"] as string;
-            this.MACAddress_alias1 = (mo_adapter["MACAddress"] as string).Replace(":", "-");
-            this.MACAddress_alias2 = (mo_adapter["MACAddress"] as string).Replace(":", "").ToLower();
-            this.GUID = guid;
-            this.DeviceName = mo_adapter["ProductName"] as string;
-            this.Manufacturer = mo_adapter["Manufacturer"] as string;
-            this.DHCPEnabled = bool.TryParse(mo_conf["DHCPEnabled"] as string, out bool b) ? b : null;
-            this.DHCPServer = mo_conf["DHCPServer"] as string;
-            this.DNSDomainSuffixSearchOrder = mo_conf["DNSDomainSuffixSearchOrder"] as string[];
+            Name = mo_adapter["NetConnectionID"] as string;
+            Addresses = NetworkAddress.GetAddresses(mo_conf);
+            GatewayAddress = mo_conf["DefaultIPGateway"] as string[];
+            DNSServers = mo_conf["DNSServerSearchOrder"] as string[];
+            MACAddress = mo_adapter["MACAddress"] as string;
+            MACAddress_alias1 = (mo_adapter["MACAddress"] as string).Replace(":", "-");
+            MACAddress_alias2 = (mo_adapter["MACAddress"] as string).Replace(":", "").ToLower();
+            GUID = guid;
+            DeviceName = mo_adapter["ProductName"] as string;
+            Manufacturer = mo_adapter["Manufacturer"] as string;
+            DHCPEnabled = bool.TryParse(mo_conf["DHCPEnabled"] as string, out bool b) ? b : null;
+            DHCPServer = mo_conf["DHCPServer"] as string;
+            DNSDomainSuffixSearchOrder = mo_conf["DNSDomainSuffixSearchOrder"] as string[];
         }
     }
 }

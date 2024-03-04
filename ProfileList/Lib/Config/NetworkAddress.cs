@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace ProfileList.Lib.Machine
+namespace ProfileList.Lib.Config
 {
     public class NetworkAddress
     {
@@ -18,10 +18,10 @@ namespace ProfileList.Lib.Machine
         public NetworkAddress() { }
         public NetworkAddress(string ip, string sm)
         {
-            this.IPAddress = ip;
-            this.SubnetMask = sm;
-            this.Prefixlength = GetPrefixLength(sm);
-            this.IPAddress_alias = $"{IPAddress}/{Prefixlength}";
+            IPAddress = ip;
+            SubnetMask = sm;
+            Prefixlength = GetPrefixLength(sm);
+            IPAddress_alias = $"{IPAddress}/{Prefixlength}";
         }
 
         public System.Net.IPAddress GetIPAddress()
@@ -65,7 +65,7 @@ namespace ProfileList.Lib.Machine
                 {
                     for (int j = 0; j < 8; j++)
                     {
-                        if ((bytes[i] & (1 << j)) != 0)
+                        if ((bytes[i] & 1 << j) != 0)
                         {
                             count++;
                         }

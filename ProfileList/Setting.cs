@@ -1,4 +1,6 @@
 ﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 
 namespace ProfileList
 {
@@ -10,6 +12,16 @@ namespace ProfileList
         public string RLAgentPipeKey { get; set; }
         public string RLAgentMutexKey { get; set; }
         public string LogDirectory { get; set; }
+        public string ProtectedProfile { get; set; }
+
+        [JsonIgnore]
+        public string[] ProtectedProfileUsers
+        {
+            get
+            {
+                return ProtectedProfile.Split(",").Select(x => x.Trim()).ToArray();
+            }
+        }
 
         public void Init()
         {
@@ -17,6 +29,7 @@ namespace ProfileList
             this.RLAgentPipeKey = "____pipe____key____";
             this.RLAgentMutexKey = "Global\\____mutex____key____";
             this.LogDirectory = "Logs";
+            this.ProtectedProfile = "Administrator, Guest, DefaultAccount, Admin, setup";
             Save();
         }
 

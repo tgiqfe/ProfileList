@@ -9,7 +9,7 @@ namespace ProfileList.Lib.Api
         /// </summary>
         /// <param name="parameter"></param>
         /// <returns></returns>
-        public static UserProfileCollection Profile(UserParameter parameter = null)
+        public static UserProfileCollection List(UserParameter parameter = null)
         {
             if (parameter?.Refresh == true)
             {
@@ -35,6 +35,74 @@ namespace ProfileList.Lib.Api
         }
 
         /// <summary>
+        /// ユーザーのログオン
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
+        public static dynamic Logon(UserParameter parameter)
+        {
+            //  受け取ったパラメータの確認
+            if (parameter == null)
+            {
+                return new
+                {
+                    Result = "NG",
+                    Message = "Parameter is null.",
+                };
+            }
+            string username = parameter.UserName ?? "";
+            string password = parameter.Password ?? "";
+            string domainname = parameter.DomainName ?? "";
+            string tempDomainName = string.IsNullOrEmpty(domainname) ? "." : domainname;
+            Item.Logger.WriteLine($"Logon user: {tempDomainName}\\{username}");
+
+            //  ログオン可否確認
+            var ret_logon = ConsoleLogon.CheckLogonUser(username, password, domainname);
+            if (!ret_logon)
+            {
+                Item.Logger.WriteLine("Logon check NG.");
+                return new
+                {
+                    Result = "NG",
+                    Message = "Logon check NG.",
+                };
+            }
+            Item.Logger.WriteLine("Logon check OK.");
+
+            //  エージェントの稼働確認
+            var ret_agent = ConsoleLogon.CheckRunningAgent();
+            if (!ret_agent)
+            {
+                Item.Logger.WriteLine("Remote Logon Agent is stopped.");
+                return new
+                {
+                    Result = "NG",
+                    Message = "Remote Logon Agent is stopped.",
+                };
+            }
+            Item.Logger.WriteLine("Remote Logon Agent is running.");
+
+            //  ログオン開始
+            var ret_enter = ConsoleLogon.Enter(username, password, domainname);
+            if (!ret_enter)
+            {
+                Item.Logger.WriteLine("Logon failed?, unknown error.");
+                return new
+                {
+                    Result = "NG",
+                    Message = "Logon failed?, unknown error.",
+                };
+            }
+            Item.Logger.WriteLine("Logon success.");
+
+            return new
+            {
+                Result = "OK",
+                Message = "Logon success.",
+            };
+        }
+
+        /// <summary>
         /// ユーザーのログオフ
         /// </summary>
         /// <param name="parameter"></param>
@@ -55,7 +123,7 @@ namespace ProfileList.Lib.Api
                 Item.Logger.WriteLine("Logoff all session.");
                 targetList = Item.UserLogonSessionCollection.Sessions.
                     ToList();
-                targetList.ForEach(x => x.Disconnect());
+                targetList.ForEach(x => x.Logoff());
             }
             else
             {
@@ -64,12 +132,12 @@ namespace ProfileList.Lib.Api
                 targetList = Item.UserLogonSessionCollection.Sessions.
                     Where(x => $"{x.UserDomain}\\{x.UserName}" == username || x.UserName == username).
                     ToList();
-                targetList.ForEach(x => x.Disconnect());
+                targetList.ForEach(x => x.Logoff());
             }
 
             return new
             {
-                disconnect = targetList.Select(x => $"{x.UserDomain}\\{x.UserName}")
+                Logoff = targetList.Select(x => $"{x.UserDomain}\\{x.UserName}")
             };
         }
 
@@ -110,7 +178,7 @@ namespace ProfileList.Lib.Api
 
             return new
             {
-                disconnect = targetList.Select(x => $"{x.UserDomain}\\{x.UserName}")
+                Disconnect = targetList.Select(x => $"{x.UserDomain}\\{x.UserName}")
             };
         }
     }

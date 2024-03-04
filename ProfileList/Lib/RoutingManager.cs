@@ -15,15 +15,15 @@ namespace ProfileList.Lib
         public void RegisterRoutes()
         {
             //  プロファイル一覧を取得
-            app.MapGet("/api/user/profile", () =>
+            app.MapGet("/api/profile/list", () =>
             {
                 Item.Logger.WriteLine("[GET]Get user profile list.");
-                return Api.User.Profile();
+                return Api.User.List();
             });
-            app.MapPost("/api/user/profile", async (HttpContext context) =>
+            app.MapPost("/api/profile/list", async (HttpContext context) =>
             {
                 Item.Logger.WriteLine("[POST]Get user profile list.");
-                return Api.User.Profile(await UserParameter.SetParamAsync(context));
+                return Api.User.List(await UserParameter.SetParamAsync(context));
             });
 
             //  ログイン中セッションの一覧を取得
@@ -38,115 +38,24 @@ namespace ProfileList.Lib
                 return Api.User.Session(await UserParameter.SetParamAsync(context));
             });
 
-
-
-
-
-
             //  ユーザーのログオン
             app.MapPost("/api/user/logon", async (HttpContext context) =>
             {
                 Item.Logger.WriteLine("[POST]User Logon.");
-
-                string username = "", password = "", domainname = "";
-                switch (context.Request.ContentType)
-                {
-                    case "application/json":
-                        Item.Logger.WriteLine("application/json");
-                        using (var reader = new StreamReader(context.Request.Body))
-                        {
-                            var body = await reader.ReadToEndAsync();
-                            var node = JsonNode.Parse(body);
-                            username = node["username"]?.ToString();
-                            password = node["password"]?.ToString();
-                            domainname = node["domain"]?.ToString();
-                            Item.Logger.WriteLine($"{username} {password} {domainname}");
-                        }
-                        break;
-                    case "application/x-www-form-urlencoded":
-                        Item.Logger.WriteLine("application/x-www-form-urlencoded");
-                        using (var reader = new StreamReader(context.Request.Body))
-                        {
-                            var body = await reader.ReadToEndAsync();
-
-                            foreach (var parameter in body.Split("&"))
-                            {
-                                var key = parameter.Substring(0, parameter.IndexOf("="));
-                                var val = parameter.Substring(parameter.IndexOf("=") + 1);
-                                switch (key)
-                                {
-                                    case "username":
-                                        username = val;
-                                        break;
-                                    case "password":
-                                        password = val;
-                                        break;
-                                    case "domain":
-                                        domainname = val;
-                                        break;
-                                }
-                            }
-                            Item.Logger.WriteLine($"{username} {password} {domainname}");
-                        }
-                        break;
-                    default:
-                        return new
-                        {
-                            Result = "NG",
-                            Description = "Not support Content-Type."
-                        };
-                }
-
-                var ret_logon = Profile.ConsoleLogon.CheckLogonUser(username, password, domainname);
-                if (ret_logon)
-                {
-                    var ret_agent = Profile.ConsoleLogon.CheckRunningAgent();
-                    if (ret_agent)
-                    {
-                        Profile.ConsoleLogon.Enter(username, password, domainname);
-                        return new
-                        {
-                            Result = "OK",
-                            Description = "Logon success."
-                        };
-                    }
-                    else
-                    {
-                        return new
-                        {
-                            Result = "NG",
-                            Description = "Agent stop."
-                        };
-                    }
-                }
-                else
-                {
-                    return new
-                    {
-                        Result = "NG",
-                        Description = "Failed to logon."
-                    };
-                }
+                return Api.User.Logon(await UserParameter.SetParamAsync(context));
             });
 
             //  ユーザーのログオフ
             app.MapGet("/api/user/logoff", () =>
             {
                 Item.Logger.WriteLine("[GET]User Logoff.");
-                /*
-                Item.UserLogonSessionCollection.Sessions = Profile.UserLogonSession.GetLoggedOnSession();
-                Item.UserLogonSessionCollection.Sessions.
-                    ToList().
-                    ForEach(x => x.Logoff());
-                return new
-                {
-                    Result = "OK"
-                };*/
+                return Api.User.Logoff();
             });
-
-
-
-
+            app.MapPost("/api/user/logoff", async (HttpContext context) =>
+            {
+                Item.Logger.WriteLine("[POST]User Logoff.");
+                return Api.User.Logoff(await UserParameter.SetParamAsync(context));
+            });
 
             //  ユーザーの切断
             app.MapGet("api/user/disconnect", () =>

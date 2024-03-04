@@ -1,4 +1,4 @@
-﻿using ProfileList.Lib.Machine;
+﻿using ProfileList.Lib.Config;
 using ProfileList.Lib.Profile;
 using System.Diagnostics;
 

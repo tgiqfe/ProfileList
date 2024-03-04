@@ -1,7 +1,7 @@
 ﻿using System.Management;
 using System.Text.Json.Serialization;
 
-namespace ProfileList.Lib.Machine
+namespace ProfileList.Lib.Config
 {
     public class MachineInfo
     {
@@ -31,16 +31,16 @@ namespace ProfileList.Lib.Machine
 
         public MachineInfo()
         {
-            this.ComputerName = Environment.MachineName;
-            this.DomainName = new ManagementClass("Win32_ComputerSystem").
+            ComputerName = Environment.MachineName;
+            DomainName = new ManagementClass("Win32_ComputerSystem").
                 GetInstances().
                 OfType<ManagementObject>().
                 First()["Domain"] as string;
-            this.IsDomainMachine = (bool)new ManagementClass("Win32_ComputerSystem").
+            IsDomainMachine = (bool)new ManagementClass("Win32_ComputerSystem").
                 GetInstances().
                 OfType<ManagementObject>().
                 First()["PartOfDomain"];
-            this.SystemSIDs = new ManagementClass("Win32_SystemAccount").
+            SystemSIDs = new ManagementClass("Win32_SystemAccount").
                 GetInstances().
                 OfType<ManagementObject>().
                 Select(x => x["SID"] as string).
@@ -59,10 +59,10 @@ namespace ProfileList.Lib.Machine
                 {
                     nwConf = mo_conves[0];
                 }
-                this.IPAddress = (nwConf["IPAddress"] as string[])[0];
-                this.SubnetMask = (nwConf["IPSubnet"] as string[])[0];
-                this.DefaultGateway = (nwConf["DefaultIPGateway"] as string[])[0];
-                this.DNSServers = string.Join(", ", nwConf["DNSServerSearchOrder"] as string[]);
+                IPAddress = (nwConf["IPAddress"] as string[])[0];
+                SubnetMask = (nwConf["IPSubnet"] as string[])[0];
+                DefaultGateway = (nwConf["DefaultIPGateway"] as string[])[0];
+                DNSServers = string.Join(", ", nwConf["DNSServerSearchOrder"] as string[]);
             }
             else
             {
@@ -72,10 +72,10 @@ namespace ProfileList.Lib.Machine
                 {
                     iface = Item.NetworkProfile.Interfaces[0];
                 }
-                this.IPAddress = iface.Addresses[0].IPAddress;
-                this.SubnetMask = iface.Addresses[0].SubnetMask;
-                this.DefaultGateway = iface.GatewayAddress?.Length > 0 ? iface.GatewayAddress[0] : "";
-                this.DNSServers = string.Join(", ", iface.DNSServers);
+                IPAddress = iface.Addresses[0].IPAddress;
+                SubnetMask = iface.Addresses[0].SubnetMask;
+                DefaultGateway = iface.GatewayAddress?.Length > 0 ? iface.GatewayAddress[0] : "";
+                DNSServers = string.Join(", ", iface.DNSServers);
             }
         }
     }
