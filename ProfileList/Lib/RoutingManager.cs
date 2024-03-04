@@ -133,6 +133,7 @@ namespace ProfileList.Lib
             app.MapGet("/api/user/logoff", () =>
             {
                 Item.Logger.WriteLine("[GET]User Logoff.");
+                /*
                 Item.UserLogonSessionCollection.Sessions = Profile.UserLogonSession.GetLoggedOnSession();
                 Item.UserLogonSessionCollection.Sessions.
                     ToList().
@@ -140,8 +141,12 @@ namespace ProfileList.Lib
                 return new
                 {
                     Result = "OK"
-                };
+                };*/
             });
+
+
+
+
 
             //  ユーザーの切断
             app.MapGet("api/user/disconnect", () =>

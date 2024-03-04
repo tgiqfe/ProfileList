@@ -40,9 +40,37 @@ namespace ProfileList.Lib.Api
         /// <param name="parameter"></param>
         public static dynamic Logoff(UserParameter parameter = null)
         {
+            string username = parameter == null ?
+                null :
+                string.IsNullOrEmpty(parameter.DomainName) ?
+                    parameter.UserName :
+                    $"{parameter.DomainName}\\{parameter.UserName}";
+            Item.Logger.WriteLine("Logoff target user: " + (username ?? "All"));
 
+            Item.UserLogonSessionCollection = new();
+            List<UserLogonSession> targetList = null;
+            if (string.IsNullOrEmpty(username))
+            {
+                //  ユーザー指定無し。全RDPセッションをログオフ
+                Item.Logger.WriteLine("Logoff all session.");
+                targetList = Item.UserLogonSessionCollection.Sessions.
+                    ToList();
+                targetList.ForEach(x => x.Disconnect());
+            }
+            else
+            {
+                //  ユーザー指定有り。指定ユーザーのRDPセッションをログオフ
+                Item.Logger.WriteLine($"Logoff session. [{username}]");
+                targetList = Item.UserLogonSessionCollection.Sessions.
+                    Where(x => $"{x.UserDomain}\\{x.UserName}" == username || x.UserName == username).
+                    ToList();
+                targetList.ForEach(x => x.Disconnect());
+            }
 
-            return new { };
+            return new
+            {
+                disconnect = targetList.Select(x => $"{x.UserDomain}\\{x.UserName}")
+            };
         }
 
         /// <summary>
@@ -56,34 +84,34 @@ namespace ProfileList.Lib.Api
                 string.IsNullOrEmpty(parameter.DomainName) ?
                     parameter.UserName :
                     $"{parameter.DomainName}\\{parameter.UserName}";
+            Item.Logger.WriteLine("Disconnect target user: " + (username ?? "All"));
+
             Item.UserLogonSessionCollection = new();
+            List<UserLogonSession> targetList = null;
             if (string.IsNullOrEmpty(username))
             {
                 //  ユーザー指定無し。全RDPセッションを切断
                 Item.Logger.WriteLine("Disconnect all RDP session.");
-                var list = Item.UserLogonSessionCollection.Sessions.
+                targetList = Item.UserLogonSessionCollection.Sessions.
                     Where(x => x.ProtocolType == 2).
                     ToList();
-                list.ForEach(x => x.Disconnect());
-                return new
-                {
-                    disconnect = list.Select(x => $"{x.UserDomain}\\{x.UserName}")
-                };
+                targetList.ForEach(x => x.Disconnect());
             }
             else
             {
                 //  ユーザー指定有り。指定ユーザーのRDPセッションを切断
                 Item.Logger.WriteLine($"Disconnect RDP session. [{username}]");
-                var list = Item.UserLogonSessionCollection.Sessions.
+                targetList = Item.UserLogonSessionCollection.Sessions.
                     Where(x => x.ProtocolType == 2).
                     Where(x => $"{x.UserDomain}\\{x.UserName}" == username || x.UserName == username).
                     ToList();
-                list.ForEach(x => x.Disconnect());
-                return new
-                {
-                    disconnect = list.Select(x => $"{x.UserDomain}\\{x.UserName}")
-                };
+                targetList.ForEach(x => x.Disconnect());
             }
+
+            return new
+            {
+                disconnect = targetList.Select(x => $"{x.UserDomain}\\{x.UserName}")
+            };
         }
     }
 }
