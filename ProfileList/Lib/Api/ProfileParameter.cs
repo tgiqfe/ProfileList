@@ -2,7 +2,7 @@
 
 namespace ProfileList.Lib.Api
 {
-    public class ProfileParameter
+    public class ProfileParameter : ApiParameter
     {
         public bool? Refresh { get; set; }
         public string UserName { get; set; }

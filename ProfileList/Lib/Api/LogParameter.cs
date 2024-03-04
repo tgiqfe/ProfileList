@@ -2,12 +2,14 @@
 
 namespace ProfileList.Lib.Api
 {
-    public class LogParameter
+    public class LogParameter : ApiParameter
     {
         public int? Line { get; set; }
         public int? Request { get; set; }
         public bool? AllPrint { get; set; }
-        
+
+        public LogParameter() { }
+
         public static async Task<LogParameter> SetParamAsync(HttpContext context)
         {
             LogParameter parameter = null;

@@ -23,14 +23,16 @@ namespace ProfileList.Lib
             app.MapPost("/api/profile/list", async (HttpContext context) =>
             {
                 Item.Logger.WriteLine("[POST]Get user profile list.");
-                return Api.Profile.List(await ProfileParameter.SetParamAsync(context));
+                //return Api.Profile.List(await ProfileParameter.SetParamAsync(context));
+                return Api.Profile.List(await ApiParameter.SetAsync<ProfileParameter>(context));
             });
 
             //  プロファイルを削除
             app.MapPost("/api/profile/delete", async (HttpContext context) =>
             {
                 Item.Logger.WriteLine("[POST]Delete user profile.");
-                return Api.Profile.Delete(await ProfileParameter.SetParamAsync(context));
+                //return Api.Profile.Delete(await ProfileParameter.SetParamAsync(context));
+                return Api.Profile.Delete(await ApiParameter.SetAsync<ProfileParameter>(context));
             });
 
             //  ログイン中セッションの一覧を取得
@@ -42,14 +44,16 @@ namespace ProfileList.Lib
             app.MapPost("/api/user/session", async (HttpContext context) =>
             {
                 Item.Logger.WriteLine("[POST]Get user logon sessions.");
-                return Api.User.Session(await UserParameter.SetParamAsync(context));
+                //return Api.User.Session(await UserParameter.SetParamAsync(context));
+                return Api.User.Session(await ApiParameter.SetAsync<UserParameter>(context));
             });
 
             //  ユーザーのログオン
             app.MapPost("/api/user/logon", async (HttpContext context) =>
             {
                 Item.Logger.WriteLine("[POST]User Logon.");
-                return Api.User.Logon(await UserParameter.SetParamAsync(context));
+                //return Api.User.Logon(await UserParameter.SetParamAsync(context));
+                return Api.User.Logon(await ApiParameter.SetAsync<UserParameter>(context));
             });
 
             //  ユーザーのログオフ
@@ -61,7 +65,8 @@ namespace ProfileList.Lib
             app.MapPost("/api/user/logoff", async (HttpContext context) =>
             {
                 Item.Logger.WriteLine("[POST]User Logoff.");
-                return Api.User.Logoff(await UserParameter.SetParamAsync(context));
+                //return Api.User.Logoff(await UserParameter.SetParamAsync(context));
+                return Api.User.Logoff(await ApiParameter.SetAsync<UserParameter>(context));
             });
 
             //  ユーザーの切断
@@ -73,7 +78,8 @@ namespace ProfileList.Lib
             app.MapPost("api/user/disconnect", async (HttpContext context) =>
             {
                 Item.Logger.WriteLine("[POST]User Disconnect, from RDP.");
-                return Api.User.Disconnect(await UserParameter.SetParamAsync(context));
+                //return Api.User.Disconnect(await UserParameter.SetParamAsync(context));
+                return Api.User.Disconnect(await ApiParameter.SetAsync<UserParameter>(context));
             });
 
             //  ログの出力
@@ -92,7 +98,8 @@ namespace ProfileList.Lib
             {
                 Item.Logger.Pause = true;
                 Item.Logger.WriteLine("[POST]Log print.");
-                var print = Api.Log.Print(await LogParameter.SetParamAsync(context));
+                //var print = Api.Log.Print(await LogParameter.SetParamAsync(context));
+                var print = Api.Log.Print(await ApiParameter.SetAsync<LogParameter>(context));
                 Item.Logger.Pause = false;
                 return new
                 {
@@ -109,7 +116,8 @@ namespace ProfileList.Lib
             app.MapPost("/api/server/info", async (HttpContext context) =>
             {
                 Item.Logger.WriteLine("[POST]Get System Info.");
-                return Api.Server.Info(await ServerParameter.SetParamAsync(context));
+                //return Api.Server.Info(await ServerParameter.SetParamAsync(context));
+                return Api.Server.Info(await ApiParameter.SetAsync<ServerParameter>(context));
             });
 
             //  サーバのネットワーク情報の取得
@@ -126,7 +134,8 @@ namespace ProfileList.Lib
                 Item.Logger.WriteLine("[POST]Get Network Info.");
                 return new
                 {
-                    NetworkInterfaces = Api.Server.Network(await ServerParameter.SetParamAsync(context))
+                    //NetworkInterfaces = Api.Server.Network(await ServerParameter.SetParamAsync(context))
+                    networkInterface = Api.Server.Network(await ApiParameter.SetAsync<ServerParameter>(context))
                 };
             });
 

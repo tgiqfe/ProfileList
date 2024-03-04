@@ -2,7 +2,7 @@
 
 namespace ProfileList.Lib.Api
 {
-    public class UserParameter
+    public class UserParameter : ApiParameter
     {
         public string UserName { get; set; }
         public string Password { get; set; }
