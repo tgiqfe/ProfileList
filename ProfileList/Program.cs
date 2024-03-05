@@ -19,8 +19,16 @@ Item.UserProfileCollection = new();
 Item.Logger = new(Item.Setting.LogDirectory);
 
 #endregion
+#region Start log
 
 Item.Logger.WriteLine("Start Service.");
+Item.Logger.WriteLine($"Setting: Port [{Item.Setting.Port}]");
+Item.Logger.WriteLine($"Setting: RLAgentPipeKey [{Item.Setting.RLAgentPipeKey}]");
+Item.Logger.WriteLine($"Setting: RLAgentMutexKey [{Item.Setting.RLAgentMutexKey}]");
+Item.Logger.WriteLine($"Setting: LogDirectory [{Item.Setting.LogDirectory}]");
+Item.Logger.WriteLine($"Setting: ProtectedProfile [{Item.Setting.ProtectedProfile}]");
+
+#endregion
 
 app.MapGet("/", () => "");
 app.MapPost("/", () => "");

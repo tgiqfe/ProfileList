@@ -8,7 +8,7 @@
         public int FileCount { get; set; }
         public int DirectoryCount { get; set; }
         public long Size { get; set; }
-        public string SizeText { get { return GetSize(); } }
+        public string SizeText { get { return GetSizeText(); } }
 
         public bool IsFinished { get; set; }
 
@@ -66,7 +66,7 @@
             catch { }
         }
 
-        public string GetSize()
+        public string GetSizeText()
         {
             if (Size < 1024)
             {
