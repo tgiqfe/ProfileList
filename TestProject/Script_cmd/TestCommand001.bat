@@ -14,6 +14,7 @@ set SERVER_PORT=5000
 rem # =========================================================
 rem # プロファイル一覧を取得
 rem # =========================================================
+
 rem # 通常どおりのGETリクエスト
 curl -X GET %SERVER_URL%:%SERVER_PORT%/api/profile/list | jq
 
@@ -38,6 +39,7 @@ curl -X POST %SERVER_URL%:%SERVER_PORT%/api/profile/list ^
   -H "Content-Type: application/json" ^
   -d "{ \"refresh\": false }" | jq
 
+
 rem # =========================================================
 rem # プロファイルの削除
 rem # =========================================================
@@ -51,6 +53,12 @@ rem # プロファイルの削除 (全ユーザーのプロファイルを削除
 rem # ※Protectedプロファイルは除外
 curl -X POST %SERVER_URL%:%SERVER_PORT%/api/profile/delete ^
   -d "all=true" | jq
+
+rem # プロファイルの削除 (DELETEメソッド, 全ユーザーのプロファイルを削除)
+rem # ※Protectedプロファイルは除外
+curl -X DELETE %SERVER_URL%:%SERVER_PORT%/api/profile/delete ^
+  -d "all=true" | jq
+
 
 rem # =========================================================
 rem # ログイン中セッションの一覧を取得
@@ -79,6 +87,7 @@ rem # ログイン中セッションの一覧を取得 Jsonで値渡し (Refresh
 curl -X POST %SERVER_URL%:%SERVER_PORT%/api/user/session ^
   -H "Content-Type: application/json" ^
   -d "{ \"refresh\": true }" | jq
+
 
 rem # =========================================================
 rem # ユーザーのログオン

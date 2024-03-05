@@ -15,6 +15,11 @@ namespace ProfileList.Lib.Api
             {
                 body = await reader.ReadToEndAsync();
             }
+            if(string.IsNullOrEmpty(body))
+            {
+                Item.Logger.WriteLine("Request body is empty.");
+                return parameter;
+            }
 
             var props = typeof(T).GetType().GetProperties(
                 BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);

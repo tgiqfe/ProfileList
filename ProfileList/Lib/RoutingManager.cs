@@ -32,6 +32,11 @@ namespace ProfileList.Lib
                 Item.Logger.WriteLine("[POST]Delete user profile.");
                 return Api.Profile.Delete(await ApiParameter.SetAsync<ProfileParameter>(context));
             });
+            app.MapDelete("/api/profile/delete", async (HttpContext context) =>
+            {
+                Item.Logger.WriteLine("[POST]Delete user profile.");
+                return Api.Profile.Delete(await ApiParameter.SetAsync<ProfileParameter>(context));
+            });
 
             //  ログイン中セッションの一覧を取得
             app.MapGet("/api/user/session", () =>
