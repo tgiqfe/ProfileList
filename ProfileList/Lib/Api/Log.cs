@@ -38,7 +38,8 @@ namespace ProfileList.Lib.Api
                         if (logmessage.StartsWith("[GET]") ||
                             logmessage.StartsWith("[POST]") ||
                             logmessage.StartsWith("[DELETE]") ||
-                            logmessage.StartsWith("[PUT]"))
+                            logmessage.StartsWith("[PUT]") ||
+                            logmessage.StartsWith("Start Service."))
                         {
                             count++;
                         }

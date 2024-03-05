@@ -15,19 +15,21 @@ namespace ProfileList.Lib.Api
             {
                 body = await reader.ReadToEndAsync();
             }
-            if(string.IsNullOrEmpty(body))
+            if (string.IsNullOrEmpty(body))
             {
                 Item.Logger.WriteLine("Request body is empty.");
                 return parameter;
             }
 
-            var props = typeof(T).GetType().GetProperties(
+            var props = typeof(T).GetProperties(
                 BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
             switch (context.Request.ContentType)
             {
                 case "application/json":
                     Item.Logger.WriteLine("Content-Type: application/json");
-                    var node = JsonNode.Parse(body);
+                    var node = JsonNode.Parse(
+                        body,
+                        new JsonNodeOptions() { PropertyNameCaseInsensitive = true });
                     parameter = new();
                     foreach (var prop in props)
                     {

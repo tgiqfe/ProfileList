@@ -11,17 +11,20 @@ $SERVER_PORT = 5000
 # プロファイル一覧を取得
 # =========================================================
 
-# 通常どおりのGETリクエスト
-$ret = Invoke-WebRequest -Method Get "${SERVER_URL}:${SERVER_PORT}/api/profile/list"
-$ret.Content
+# プロファイル情報取得。(GETメソッド)
+$res = Invoke-WebRequest -Method Get "${SERVER_URL}:${SERVER_PORT}/api/profile/list"
+$res.Content | ConvertFrom-Json
+
+# プロファイル情報を取得。(POSTメソッド)
+$res = Invoke-WebRequest -Method Post "${SERVER_URL}:${SERVER_PORT}/api/profile/list"
+$res.Content | ConvertFrom-Json
+
+# プロファイル情報を取得。Refresh = true を渡すPOST
+$res = Invoke-WebRequest -Method Post "${SERVER_URL}:${SERVER_PORT}/api/profile/list" `
+  -Body "refresh=true"
+$res.Content | ConvertFrom-Json
 
 
-
-
-curl -X GET %SERVER_URL%:%SERVER_PORT%/api/profile/list | jq
-
-# 何も指定しないPOSTリクスト
-curl -X POST %SERVER_URL%:%SERVER_PORT%/api/profile/list | jq
 
 # 値を渡すPOSTリクエスト (Refresh = true)
 curl -X POST %SERVER_URL%:%SERVER_PORT%/api/profile/list ^

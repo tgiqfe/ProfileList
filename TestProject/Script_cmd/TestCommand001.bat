@@ -177,7 +177,7 @@ curl -X POST %SERVER_URL%:%SERVER_PORT%/api/log/print ^
 
 rem # ログを取得 (POST, 最後のReqesut 1回分のみ出力)
 curl -X POST %SERVER_URL%:%SERVER_PORT%/api/log/print ^
-  -d "request=1" | jq
+  -d "request=3" | jq
 
 rem # ログを取得 (POST, JSONで値渡し, 最後のReqesut 3回分のみ出力)
 curl -X POST %SERVER_URL%:%SERVER_PORT%/api/log/print ^
