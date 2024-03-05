@@ -20,6 +20,6 @@ namespace ProfileList.Lib.Api
         /// 全ログを出力する。
         /// ログファイルは日付ごとに生成されるので、その日のログ全てを出力。
         /// </summary>
-        public bool? AllPrint { get; set; }
+        public bool? All { get; set; }
     }
 }

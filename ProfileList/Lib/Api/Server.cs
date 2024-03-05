@@ -45,6 +45,7 @@ namespace ProfileList.Lib.Api
                         FirstOrDefault(x => x.GatewayAddress?.Length > 0);
                 if (iface == null)
                 {
+                    Item.Logger.WriteLine("Main network is not found. Return first network.");
                     iface = Item.NetworkProfile.Interfaces[0];
                 }
                 return new NetworkInterface[] { iface };
