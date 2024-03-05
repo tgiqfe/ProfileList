@@ -15,7 +15,7 @@ namespace ProfileList.Lib.Api
             {
                 string text = File.ReadAllText(Item.Logger.LogPath);
 
-                if (parameter?.AllPrint ?? false)
+                if (parameter?.All ?? false)
                 {
                     //  全ログを出力
                     Item.Logger.WriteLine("Print all log.");

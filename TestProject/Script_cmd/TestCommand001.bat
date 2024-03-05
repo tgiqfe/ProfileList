@@ -163,7 +163,7 @@ curl -X POST %SERVER_URL%:%SERVER_PORT%/api/log/print ^
 
 rem # ログを取得 (POST, 全ログ出力)
 curl -X POST %SERVER_URL%:%SERVER_PORT%/api/log/print ^
-  -d "allprint=true" | jq
+  -d "all=true" | jq
 
 rem # ログを取得 (POST, JSONで値渡し, 最後20行)
 curl -X POST %SERVER_URL%:%SERVER_PORT%/api/log/print ^
@@ -173,7 +173,7 @@ curl -X POST %SERVER_URL%:%SERVER_PORT%/api/log/print ^
 rem # ログを取得 (POST, JSONで値渡し, 最後5行, 全ログ出力)
 curl -X POST %SERVER_URL%:%SERVER_PORT%/api/log/print ^
   -H "Content-Type: application/json" ^
-  -d "{ \"line\": 5, \"allprint\": true }" | jq
+  -d "{ \"line\": 5, \"all\": true }" | jq
 
 rem # ログを取得 (POST, 最後のReqesut 1回分のみ出力)
 curl -X POST %SERVER_URL%:%SERVER_PORT%/api/log/print ^
