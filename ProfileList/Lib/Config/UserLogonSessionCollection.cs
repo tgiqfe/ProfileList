@@ -9,39 +9,27 @@
             this.Sessions = UserLogonSession.GetLoggedOnSession();
         }
 
-        /*
+        #region Summary
+
         /// <summary>
-        /// RDPセッションの切断
+        /// セッション数
         /// </summary>
-        public dynamic Disconnect(string username = null)
+        /// <returns></returns>
+        public int GetSummary_SessionCount()
         {
-            this.Sessions = UserLogonSession.GetLoggedOnSession();
-            if (username == null)
-            {
-                //  ユーザー指定無し。全RDPセッションを切断
-                var list = this.Sessions.
-                    Where(x => x.ProtocolType == 2).
-                    ToList();
-                list.ForEach(x => x.Disconnect());
-                return new
-                {
-                    disconnect = list.Select(x => $"{x.UserDomain}\\{x.UserName}")
-                };
-            }
-            else
-            {
-                //  ユーザー指定有り。指定ユーザーのRDPセッションを切断
-                var list = this.Sessions.
-                    Where(x => x.ProtocolType == 2).
-                    Where(x => $"{x.UserDomain}\\{x.UserName}" == username || x.UserName == username).
-                    ToList();
-                list.ForEach(x => x.Disconnect());
-                return new
-                {
-                    disconnect = list.Select(x => $"{x.UserDomain}\\{x.UserName}")
-                };
-            }
+            return this.Sessions.Count();
         }
-        */
+
+        /// <summary>
+        /// ログオン中のユーザー
+        /// プロトコルタイプ: 0⇒コンソール, 2⇒RDP, 1⇒Unknown
+        /// </summary>
+        /// <returns></returns>
+        public string GetSummary_Users()
+        {
+            return string.Join(", ", this.Sessions.Select(x => $"{x.UserName}({x.ProtocolType})"));
+        }
+
+        #endregion
     }
 }

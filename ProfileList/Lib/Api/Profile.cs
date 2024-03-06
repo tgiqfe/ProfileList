@@ -16,6 +16,9 @@ namespace ProfileList.Lib.Api
                 Item.Logger.WriteLine("Refrsh, UserProfileCollectionl.");
                 Item.UserProfileCollection = new();
             }
+            Item.Logger.WriteLine($"Summary: profile count [{Item.UserProfileCollection.GetSummary_UserCount()}]");
+            Item.Logger.WriteLine($"Summary: profile users [{Item.UserProfileCollection.GetSummary_Users()}]");
+
             return Item.UserProfileCollection;
         }
 
