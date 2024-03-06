@@ -35,5 +35,19 @@ namespace ProfileList.Lib.Profile
                         WriteIndented = true
                     }));
         }
+
+        #region Summary
+
+        public int GetSummary_UserCount()
+        {
+            return this.Profiles.Length;
+        }
+
+        public string GetSummary_Users()
+        {
+            return string.Join(", ", this.Profiles.Select(x => x.UserName));
+        }
+
+        #endregion
     }
 }

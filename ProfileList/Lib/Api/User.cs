@@ -16,6 +16,8 @@ namespace ProfileList.Lib.Api
                 Item.Logger.WriteLine("Refrsh, UserLogonSessionCollection.");
                 Item.UserLogonSessionCollection = new();
             }
+            Item.Logger.WriteLine($"Summary: session count [{Item.UserLogonSessionCollection.GetSummary_SessionCount()}]");
+            Item.Logger.WriteLine($"Summary: session users [{Item.UserLogonSessionCollection.GetSummary_Users()}]");
             return Item.UserLogonSessionCollection;
         }
 

@@ -111,10 +111,10 @@ rem # =========================================================
 rem # ログイン中のセッションをログオフ
 rem # =========================================================
 
-rem # 全RDPセッションをログオフ (GETメソッド)
+rem # 全Rセッションをログオフ (GETメソッド)
 curl -X GET %SERVER_URL%:%SERVER_PORT%/api/user/logoff | jq
 
-rem # 全RDPセッションをログオフ (POSTメソッド)
+rem # 全セッションをログオフ (POSTメソッド)
 curl -X POST %SERVER_URL%:%SERVER_PORT%/api/user/logoff | jq
 
 rem # 指定したユーザーのセッションをログオフ (POSTメソッド, Administratorのみログオフ)
