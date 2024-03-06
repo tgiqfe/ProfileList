@@ -1,9 +1,4 @@
-using Microsoft.Extensions.Primitives;
 using ProfileList;
-using ProfileList.Lib.Profile;
-using System.Diagnostics;
-using System.Text.Json;
-using System.Text.Json.Nodes;
 using ProfileList.Lib;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,7 +11,7 @@ Item.MachineInfo = new();
 Item.NetworkProfile = new();
 Item.UserLogonSessionCollection = new();
 Item.UserProfileCollection = new();
-Item.Logger = new(Item.Setting.LogDirectory);
+Item.Logger = new();
 
 #endregion
 #region Start log

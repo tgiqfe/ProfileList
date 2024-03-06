@@ -49,7 +49,7 @@
         #endregion
 
 
-        public Logger(string logDirectory)
+        public Logger()
         {
             string parent = Path.Combine(Item.WorkingDirectory, Item.Setting.LogDirectory);
             if (!Directory.Exists(parent))
@@ -78,8 +78,5 @@
                 File.AppendAllText(LogPath, log);
             }
         }
-
-
-
     }
 }
