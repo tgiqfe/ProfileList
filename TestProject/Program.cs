@@ -42,5 +42,18 @@ setting.TestCase.ActionList.ForEach(x =>
 
 setting.Save();
 
+setting.TestCase.ActionList.ForEach(x =>
+{
+    var url = $"{setting.TestCase.Server_Protocol}://{setting.TestCase.Server_Address}:{setting.TestCase.Server_Port}{x.Address}";
+    x.Send(url).Wait();
+
+    string json = x.GetJsonResponseBody();
+    Console.WriteLine(json);
+
+});
+
+
+
+
 
 Console.ReadLine();
