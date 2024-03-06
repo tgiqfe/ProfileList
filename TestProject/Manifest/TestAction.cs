@@ -6,13 +6,14 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
 using YamlDotNet.Serialization;
 
 namespace TestProject.Manifest
 {
-    public class TestAction
+    internal class TestAction
     {
         #region private static parameter
 
@@ -24,10 +25,11 @@ namespace TestProject.Manifest
         private const string METHOD_DELETE = "DELETE";
 
         #endregion
+        #region Serialize parameter
 
-        private string _server_URL = null;
-        private int _server_Port = 0;
-
+        /// <summary>
+        /// APIのアドレス
+        /// </summary>
         public string Address { get; set; }
 
         /// <summary>
@@ -73,11 +75,16 @@ namespace TestProject.Manifest
             }
         }
 
+        /// <summary>
+        /// POST,PUT,DELETEの場合のBodyパラメータ
+        /// </summary>
         public Dictionary<string, string> BodpyParameters { get; set; }
 
-        [JsonIgnore]
-        [YamlIgnore]
-        public HttpResponseMessage Response { get; set; }
+        public List<TestResult> TestResults { get; set; }
+
+        #endregion
+
+        private ResponseSet _responseSet { get; set; }
 
         /// <summary>
         /// curlコマンドを生成する
@@ -119,47 +126,83 @@ namespace TestProject.Manifest
             };
         }
 
+        /// <summary>
+        /// Httpリクエストを送信する
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
         public async Task Send(string url)
         {
+            _responseSet = new();
             var data = new StringContent(GetBodyData(), Encoding.UTF8, this.ContentType);
-            var client = new HttpClient();
-            this.Response = this.Method switch
+            using (var client = new HttpClient())
             {
-                METHOD_GET => await client.GetAsync(url),
-                METHOD_POST => await client.PostAsync(url, data),
-                METHOD_PUT => await client.PutAsync(url, data),
-                METHOD_DELETE => await client.SendAsync(new HttpRequestMessage()
+                _responseSet.Response = this.Method switch
                 {
-                    Method = HttpMethod.Delete,
-                    RequestUri = new Uri(url),
-                    Content = data
-                }),
-                _ => null,
-            };
+                    METHOD_GET => await client.GetAsync(url),
+                    METHOD_POST => await client.PostAsync(url, data),
+                    METHOD_PUT => await client.PutAsync(url, data),
+                    METHOD_DELETE => await client.SendAsync(new HttpRequestMessage()
+                    {
+                        Method = HttpMethod.Delete,
+                        RequestUri = new Uri(url),
+                        Content = data
+                    }),
+                    _ => null,
+                };
+            }
 
-
-            /*
-            var result = Response.Content.ReadAsStringAsync().Result;
-            var node = JsonNode.Parse(
-                result,
-                new JsonNodeOptions() { PropertyNameCaseInsensitive = true });
-            */
-
-        }
-
-        public string GetJsonResponseBody()
-        {
             using (var ms = new MemoryStream())
-            using (var reader = JsonReaderWriterFactory.CreateJsonReader(this.Response.Content.ReadAsStream(), XmlDictionaryReaderQuotas.Max))
+            using (var reader = JsonReaderWriterFactory.CreateJsonReader(_responseSet.Response.Content.ReadAsStream(), XmlDictionaryReaderQuotas.Max))
             using (var writer = JsonReaderWriterFactory.CreateJsonWriter(ms, Encoding.UTF8, true, true))
             {
                 writer.WriteNode(reader, true);
                 writer.Flush();
-                return Encoding.UTF8.GetString(ms.ToArray());
+                _responseSet.Content = Encoding.UTF8.GetString(ms.ToArray());
+            }
+
+            _responseSet.Node = JsonNode.Parse(
+                _responseSet.Content,
+                new JsonNodeOptions() { PropertyNameCaseInsensitive = true });
+        }
+
+        public void TestStart()
+        {
+            foreach (var result in this.TestResults)
+            {
+                result.SetResponseParameter(_responseSet);
             }
         }
 
+        /*
+        /// <summary>
+        /// 対象の値までのパスからNodeの値を取得する
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public string GetNodeValue(string key)
+        {
+            var node = JsonNode.Parse(
+                this.ResponseContent,
+                new JsonNodeOptions() { PropertyNameCaseInsensitive = true });
 
+            var pat_index = new Regex(@"\[\d+\]");
+            foreach (var field in key.Split("/"))
+            {
+                if (string.IsNullOrEmpty(field)) continue;
+                if (pat_index.IsMatch(field))
+                {
+                    int index = int.Parse(field.TrimStart('[').TrimEnd(']'));
+                    node = node[index];
+                }
+                else
+                {
+                    node = node[field];
+                }
+            }
 
+            return node.ToString();
+        }
+        */
     }
 }

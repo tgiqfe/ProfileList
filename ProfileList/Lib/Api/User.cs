@@ -13,7 +13,7 @@ namespace ProfileList.Lib.Api
         {
             if (parameter?.Refresh == true)
             {
-                Item.Logger.WriteLine("Refrsh, UserLogonSessionCollection.");
+                Item.Logger.WriteLine("Refresh, UserLogonSessionCollection.");
                 Item.UserLogonSessionCollection = new();
             }
             Item.Logger.WriteLine($"Summary: session count [{Item.UserLogonSessionCollection.GetSummary_SessionCount()}]");

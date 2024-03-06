@@ -8,7 +8,7 @@ using YamlDotNet.Serialization;
 
 namespace TestProject.Manifest
 {
-    public class TestCaseSetting
+    internal class TestCaseSetting
     {
         public TestCase TestCase { get; set; }
 

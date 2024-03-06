@@ -13,7 +13,7 @@ namespace ProfileList.Lib.Api
         {
             if (parameter?.Refresh == true)
             {
-                Item.Logger.WriteLine("Refrsh, MachineInfo.");
+                Item.Logger.WriteLine("Refresh, MachineInfo.");
                 Item.MachineInfo = new MachineInfo();
             }
             return Item.MachineInfo;
@@ -29,7 +29,7 @@ namespace ProfileList.Lib.Api
         {
             if (parameter?.Refresh == true)
             {
-                Item.Logger.WriteLine("Refrsh, NetworkInfo.");
+                Item.Logger.WriteLine("Refresh, NetworkInfo.");
                 Item.NetworkProfile = new();
             }
             if (parameter?.All == true)
