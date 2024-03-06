@@ -45,6 +45,54 @@ $res.Content | ConvertFrom-Json | ConvertTo-Json
 
 
 
+# =========================================================
+# ユーザーのログオン
+# =========================================================
+
+# 指定したユーザーでログオン
+$res = Invoke-WebRequest -Method Post -Uri "${SERVER_URL}:${SERVER_PORT}/api/user/logon" `
+  -Body "username=Administrator&password=Password"
+$res.Content | ConvertFrom-Json | ConvertTo-Json
+
+# 指定したユーザーでログオン (ドメイン指定有り)
+$res = Invoke-WebRequest -Method Post -Uri "${SERVER_URL}:${SERVER_PORT}/api/user/logon" `
+  -Body "username=Administrator&password=Password&domainname=EXAMPLE-DOMAIN"
+$res.Content | ConvertFrom-Json | ConvertTo-Json
+
+# 指定したユーザーでログオン (JSONで値渡し)
+$res = Invoke-WebRequest -Method Post -Uri "${SERVER_URL}:${SERVER_PORT}/api/user/logon" `
+  -ContentType "application/json" `
+  -Body "{ `"username`": `"Administrator`", `"password`": `"Password`", `"domainname`": `"EXAMPLE-DOMAIN`" }"
+$res.Content | ConvertFrom-Json | ConvertTo-Json
+
+# =========================================================
+# ログイン中のセッションをログオフ
+# =========================================================
+
+# 全RDPセッションをログオフ (GETメソッド)
+$res = Invoke-WebRequest -Method Get -Uri "${SERVER_URL}:${SERVER_PORT}/api/user/logoff"
+$res.Content | ConvertFrom-Json | ConvertTo-Json
+
+# 全RDPセッションをログオフ (POSTメソッド)
+$res = Invoke-WebRequest -Method Post -Uri "${SERVER_URL}:${SERVER_PORT}/api/user/logoff"
+$res.Content | ConvertFrom-Json | ConvertTo-Json
+
+# 指定したユーザーのセッションをログオフ (POSTメソッド, Administratorのみログオフ)
+$res = Invoke-WebRequest -Method Post -Uri "${SERVER_URL}:${SERVER_PORT}/api/user/logoff" `
+  -Body "username=Administrator"
+$res.Content | ConvertFrom-Json | ConvertTo-Json
+
+# 指定したユーザーのセッションをログオフ (POSTメソッド, Administratorのみログオフ, ドメイン指定有り)
+$res = Invoke-WebRequest -Method Post -Uri "${SERVER_URL}:${SERVER_PORT}/api/user/logoff" `
+  -Body "username=Administrator&domainname=EXAMPLE-DOMAIN"
+$res.Content | ConvertFrom-Json | ConvertTo-Json
+
+
+
+
+
+
+
 
 # =========================================================
 # ログを取得
