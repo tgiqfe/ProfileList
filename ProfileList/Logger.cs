@@ -67,7 +67,7 @@
         /// <param name="message"></param>
         public void WriteLine(string message)
         {
-            string log = $"[{DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")}] {message}{Environment.NewLine}";
+            string log = $"[{DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")}] {message}";
 
             if (this.Pause)
             {
@@ -75,7 +75,7 @@
             }
             else
             {
-                File.AppendAllText(LogPath, log);
+                File.AppendAllText(LogPath, log + Environment.NewLine);
             }
         }
     }

@@ -164,7 +164,7 @@ rem # ログを取得 (POST, 全ログ出力)
 curl -X POST %SERVER_URL%/api/log/print ^
   -d "all=true" | jq
 
-rem # ログを取得 (POST, JSONで値渡し, 最後20行)
+rem # ログを取得 (POST, JSONで値渡し, 最後5行)
 curl -X POST %SERVER_URL%/api/log/print ^
   -H "Content-Type: application/json" ^
   -d "{ \"line\": 5 }" | jq
@@ -176,7 +176,7 @@ curl -X POST %SERVER_URL%/api/log/print ^
 
 rem # ログを取得 (POST, 最後のReqesut 1回分のみ出力)
 curl -X POST %SERVER_URL%/api/log/print ^
-  -d "request=3" | jq
+  -d "request=1" | jq
 
 rem # ログを取得 (POST, JSONで値渡し, 最後のReqesut 3回分のみ出力)
 curl -X POST %SERVER_URL%/api/log/print ^

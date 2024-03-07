@@ -7,7 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Script_cmd\" />
+    <Compile Remove="Script_cmd\**" />
+    <EmbeddedResource Remove="Script_cmd\**" />
+    <None Remove="Script_cmd\**" />
   </ItemGroup>
 
   <ItemGroup>

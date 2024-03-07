@@ -1,0 +1,11 @@
+TestCase:
+  Server_Protocol: http
+  Server_Address: localhost
+  Server_Port: 5000
+  Description: Test case description
+  ActionList:
+  - Address: /api/profile/list
+    Method: GET
+    ContentType: application/json
+    BodpyParameters:
+      refresh: true

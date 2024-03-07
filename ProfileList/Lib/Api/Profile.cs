@@ -13,7 +13,7 @@ namespace ProfileList.Lib.Api
         {
             if (parameter?.Refresh == true)
             {
-                Item.Logger.WriteLine("Refrsh, UserProfileCollectionl.");
+                Item.Logger.WriteLine("Refresh, UserProfileCollectionl.");
                 Item.UserProfileCollection = new();
             }
             Item.Logger.WriteLine($"Summary: profile count [{Item.UserProfileCollection.GetSummary_UserCount()}]");
@@ -29,7 +29,7 @@ namespace ProfileList.Lib.Api
         /// <returns></returns>
         public static dynamic Delete(ProfileParameter parameter = null)
         {
-            Item.Logger.WriteLine("Refrsh, UserProfileCollectionl.");
+            Item.Logger.WriteLine("Refresh, UserProfileCollectionl.");
             Item.UserProfileCollection = new();
 
             List<UserProfile> targetList = null;
