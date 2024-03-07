@@ -19,22 +19,25 @@ namespace TestProject.Manifest
 
         public string Server { get; set; }
 
-        public List<string> StoredLog { get; set; }
+        public string[] StoredLog { get; set; }
 
+        /// <summary>
+        /// /api/log/print で、、request=1のリクエストを送信して、
+        /// 最後のリクエストログを取得して格納。
+        /// </summary>
         public void CheckLastRequestLog()
         {
             if (this.StoredLog == null)
             {
                 string url = $"{this.Server}/api/log/print";
-                var data = new StringContent("{ \"request\": 1 }", Encoding.UTF8, TestAction.CONTENT_TYPE_JSON);
+                using (var data = new StringContent("{ \"request\": 1 }", Encoding.UTF8, TestAction.CONTENT_TYPE_JSON))
                 using (var client = new HttpClient())
                 {
                     var response = client.PostAsync(url, data).Result;
                     var content = response.Content.ReadAsStringAsync().Result;
                     var node = JsonNode.Parse(content,
                         new JsonNodeOptions() { PropertyNameCaseInsensitive = true });
-
-                    //var logs = node["log"] as string[];
+                    this.StoredLog = node["log"].AsArray().Select(x => x.ToString()).ToArray();
                 }
             }
         }

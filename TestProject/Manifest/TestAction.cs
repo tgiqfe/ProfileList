@@ -134,9 +134,8 @@ namespace TestProject.Manifest
         public async Task Send(string server, string address)
         {
             string url = $"{server}{address}";
-            _responseSet = new();
-            _responseSet.Server = server;
-            var data = new StringContent(GetBodyData(), Encoding.UTF8, this.ContentType);
+            _responseSet = new() { Server = server };
+            using (var data = new StringContent(GetBodyData(), Encoding.UTF8, this.ContentType))
             using (var client = new HttpClient())
             {
                 _responseSet.Response = this.Method switch
@@ -158,8 +157,8 @@ namespace TestProject.Manifest
             using (var reader = JsonReaderWriterFactory.CreateJsonReader(_responseSet.Response.Content.ReadAsStream(), XmlDictionaryReaderQuotas.Max))
             using (var writer = JsonReaderWriterFactory.CreateJsonWriter(ms, Encoding.UTF8, true, true))
             {
-                await writer.WriteNodeAsync(reader, true);
-                await writer.FlushAsync();
+                writer.WriteNode(reader, true);
+                writer.Flush();
                 _responseSet.Content = Encoding.UTF8.GetString(ms.ToArray());
             }
 
@@ -167,9 +166,12 @@ namespace TestProject.Manifest
                 _responseSet.Content,
                 new JsonNodeOptions() { PropertyNameCaseInsensitive = true });
 
-            foreach (var result in this.TestResults)
+            if(this.TestResults != null)
             {
-                result.SetResponseParameter(_responseSet, server);
+                foreach (var result in this.TestResults)
+                {
+                    result.SetResponseParameter(_responseSet, server);
+                }
             }
         }
     }

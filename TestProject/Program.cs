@@ -35,6 +35,18 @@ else
                             TestType = "key",
                             TestCode = "/networkInterface/[0]/name",
                             Expected = "イーサネット"
+                        },
+                        new TestResult
+                        {
+                            TestType = "log",
+                            TestCode = "line=1",
+                            Expected = "[POST]Get Network Info."
+                        },
+                        new TestResult
+                        {
+                            TestType = "log",
+                            TestCode = "line=10",
+                            Expected = "[POST]Get Network Info."
                         }
                     }
                 }
@@ -51,9 +63,9 @@ setting.TestCase.ActionList.ForEach(x =>
 setting.TestCase.ActionList.ForEach(x =>
 {
     var server = $"{setting.TestCase.Server_Protocol}://{setting.TestCase.Server_Address}:{setting.TestCase.Server_Port}";
-    
-    var url = $"{setting.TestCase.Server_Protocol}://{setting.TestCase.Server_Address}:{setting.TestCase.Server_Port}{x.Address}";
-    x.Send(url).Wait();
+
+    //var url = $"{setting.TestCase.Server_Protocol}://{setting.TestCase.Server_Address}:{setting.TestCase.Server_Port}{x.Address}";
+    x.Send(server, x.Address).Wait();
 });
 
 

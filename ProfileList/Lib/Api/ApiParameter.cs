@@ -23,7 +23,8 @@ namespace ProfileList.Lib.Api
 
             var props = typeof(T).GetProperties(
                 BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
-            switch (context.Request.ContentType)
+            string contentType = context.Request.ContentType.Split(";").FirstOrDefault(x => x.StartsWith("application"));
+            switch (contentType)
             {
                 case "application/json":
                     Item.Logger.WriteLine("Content-Type: application/json");

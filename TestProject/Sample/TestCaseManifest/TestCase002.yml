@@ -1,0 +1,25 @@
+TestCase:
+  Server_Protocol: http
+  Server_Address: localhost
+  Server_Port: 5000
+  ActionList:
+  - Address: /api/log/print
+    Method: POST
+    ContentType: application/json
+    BodpyParameters:
+      request: 1
+    TestResults: 
+  - Address: /api/server/network
+    Method: POST
+    ContentType: application/x-www-form-urlencoded
+    BodpyParameters:
+      refresh: true
+    TestResults:
+    - TestType: key
+      TestCode: /networkInterface/[0]/name
+      Expected: イーサネット
+      Actual: Wi-Fi
+    - TestType: log
+      TestCode: log=1
+      Expected: ''
+      Actual: '[POST]Get Network Info.'

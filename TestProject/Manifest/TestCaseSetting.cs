@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices.Marshalling;
 using System.Text;
 using System.Threading.Tasks;
+using TestProject.Lib;
 using YamlDotNet.Serialization;
 
 namespace TestProject.Manifest
@@ -37,7 +38,14 @@ namespace TestProject.Manifest
         public void Save()
         {
             string path = Path.Combine(Item.WorkingDirectory, "testcase.yml");
-            string content = new Serializer().Serialize(this);
+
+            var builder = new SerializerBuilder().
+                WithEventEmitter(x => new MultilineScalarFlowStyleEmitter(x)).
+                Build();
+            string content = builder.Serialize(this);
+
+            
+            //string content = new Serializer().Serialize(this);
             File.WriteAllText(path, content);
         }
     }
