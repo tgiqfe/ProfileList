@@ -9,10 +9,24 @@ using YamlDotNet.Serialization;
 
 namespace TestProject.Manifest
 {
+    /// <summary>
+    /// テストケースのTopクラス
+    /// </summary>
     internal class TestCaseSetting
     {
         public TestCase TestCase { get; set; }
 
+        /// <summary>
+        /// 初期設定
+        /// </summary>
+        public void Init()
+        {
+        }
+
+        /// <summary>
+        /// ファイルから読み込んで、TestCaseSettingクラスを生成
+        /// </summary>
+        /// <returns></returns>
         public static TestCaseSetting Load()
         {
             string path = Path.Combine(Item.WorkingDirectory, "testcase.yml");
@@ -31,21 +45,15 @@ namespace TestProject.Manifest
             return tc;
         }
 
-        public void Init()
-        {
-        }
-
+        /// <summary>
+        /// TestCaseSettingクラスをファイルに保存
+        /// </summary>
         public void Save()
         {
             string path = Path.Combine(Item.WorkingDirectory, "testcase.yml");
-
-            var builder = new SerializerBuilder().
+            string content = new SerializerBuilder().
                 WithEventEmitter(x => new MultilineScalarFlowStyleEmitter(x)).
-                Build();
-            string content = builder.Serialize(this);
-
-            
-            //string content = new Serializer().Serialize(this);
+                Build().Serialize(this);
             File.WriteAllText(path, content);
         }
     }

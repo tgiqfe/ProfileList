@@ -15,9 +15,9 @@ else
     {
         TestCase = new TestCase
         {
-            Server_Protocol = "http",
-            Server_Address = "localhost",
-            Server_Port = 5000,
+            ServerProtocol = "http",
+            ServerAddress = "localhost",
+            ServerPort = 5000,
             ActionList = new List<TestAction>
             {
                 new TestAction
@@ -56,13 +56,13 @@ else
 }
 
 setting.TestCase.ActionList.ForEach(x =>
-    Console.WriteLine(x.toCurlCommand($"{setting.TestCase.Server_Protocol}://{setting.TestCase.Server_Address}:{setting.TestCase.Server_Port}{x.Address}")));
+    Console.WriteLine(x.toCurlCommand($"{setting.TestCase.ServerProtocol}://{setting.TestCase.ServerAddress}:{setting.TestCase.ServerPort}{x.Address}")));
 
 
 
 setting.TestCase.ActionList.ForEach(x =>
 {
-    var server = $"{setting.TestCase.Server_Protocol}://{setting.TestCase.Server_Address}:{setting.TestCase.Server_Port}";
+    var server = $"{setting.TestCase.ServerProtocol}://{setting.TestCase.ServerAddress}:{setting.TestCase.ServerPort}";
 
     //var url = $"{setting.TestCase.Server_Protocol}://{setting.TestCase.Server_Address}:{setting.TestCase.Server_Port}{x.Address}";
     x.Send(server, x.Address).Wait();

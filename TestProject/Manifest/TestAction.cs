@@ -166,7 +166,38 @@ namespace TestProject.Manifest
                 _responseSet.Content,
                 new JsonNodeOptions() { PropertyNameCaseInsensitive = true });
 
-            if(this.TestResults != null)
+            if (this.TestResults != null)
+            {
+                foreach (var result in this.TestResults)
+                {
+                    result.SetResponseParameter(_responseSet, server);
+                }
+            }
+        }
+
+
+
+
+
+        public async Task Send2(string server, string address)
+        {
+            string url = $"{server}{address}";
+            _responseSet = new() { Server = server };
+
+            using (var data = new StringContent(GetBodyData(), Encoding.UTF8, this.ContentType))
+            using (var client = new HttpClient())
+            {
+                switch (this.Method)
+                {
+                    case METHOD_GET: await _responseSet.SendGetAsync(client, url); break;
+                    case METHOD_POST: await _responseSet.SendPostAsync(client, url, data); break;
+                    case METHOD_PUT: await _responseSet.SendPutAsync(client, url, data); break;
+                    case METHOD_DELETE: await _responseSet.SendDeleteAsync(client, url, data); break;
+                    default: break;
+                }
+            }
+
+            if (this.TestResults?.Count > 0)
             {
                 foreach (var result in this.TestResults)
                 {
