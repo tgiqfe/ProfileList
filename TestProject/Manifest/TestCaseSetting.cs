@@ -20,7 +20,6 @@ namespace TestProject.Manifest
             {
                 string content = File.ReadAllText(path);
                 tc = new Deserializer().Deserialize<TestCaseSetting>(content);
-
             }
             catch { }
             if(tc == null)

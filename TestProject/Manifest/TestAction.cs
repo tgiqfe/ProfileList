@@ -15,14 +15,14 @@ namespace TestProject.Manifest
 {
     internal class TestAction
     {
-        #region private static parameter
+        #region static parameter
 
-        private const string CONTENT_TYPE_FORM = "application/x-www-form-urlencoded";
-        private const string CONTENT_TYPE_JSON = "application/json";
-        private const string METHOD_GET = "GET";
-        private const string METHOD_POST = "POST";
-        private const string METHOD_PUT = "PUT";
-        private const string METHOD_DELETE = "DELETE";
+        public const string CONTENT_TYPE_FORM = "application/x-www-form-urlencoded";
+        public const string CONTENT_TYPE_JSON = "application/json";
+        public const string METHOD_GET = "GET";
+        public const string METHOD_POST = "POST";
+        public const string METHOD_PUT = "PUT";
+        public const string METHOD_DELETE = "DELETE";
 
         #endregion
         #region Serialize parameter
@@ -131,9 +131,11 @@ namespace TestProject.Manifest
         /// </summary>
         /// <param name="url"></param>
         /// <returns></returns>
-        public async Task Send(string url)
+        public async Task Send(string server, string address)
         {
+            string url = $"{server}{address}";
             _responseSet = new();
+            _responseSet.Server = server;
             var data = new StringContent(GetBodyData(), Encoding.UTF8, this.ContentType);
             using (var client = new HttpClient())
             {
@@ -156,53 +158,19 @@ namespace TestProject.Manifest
             using (var reader = JsonReaderWriterFactory.CreateJsonReader(_responseSet.Response.Content.ReadAsStream(), XmlDictionaryReaderQuotas.Max))
             using (var writer = JsonReaderWriterFactory.CreateJsonWriter(ms, Encoding.UTF8, true, true))
             {
-                writer.WriteNode(reader, true);
-                writer.Flush();
+                await writer.WriteNodeAsync(reader, true);
+                await writer.FlushAsync();
                 _responseSet.Content = Encoding.UTF8.GetString(ms.ToArray());
             }
 
             _responseSet.Node = JsonNode.Parse(
                 _responseSet.Content,
                 new JsonNodeOptions() { PropertyNameCaseInsensitive = true });
-        }
 
-        public void TestStart()
-        {
             foreach (var result in this.TestResults)
             {
-                result.SetResponseParameter(_responseSet);
+                result.SetResponseParameter(_responseSet, server);
             }
         }
-
-        /*
-        /// <summary>
-        /// 対象の値までのパスからNodeの値を取得する
-        /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        public string GetNodeValue(string key)
-        {
-            var node = JsonNode.Parse(
-                this.ResponseContent,
-                new JsonNodeOptions() { PropertyNameCaseInsensitive = true });
-
-            var pat_index = new Regex(@"\[\d+\]");
-            foreach (var field in key.Split("/"))
-            {
-                if (string.IsNullOrEmpty(field)) continue;
-                if (pat_index.IsMatch(field))
-                {
-                    int index = int.Parse(field.TrimStart('[').TrimEnd(']'));
-                    node = node[index];
-                }
-                else
-                {
-                    node = node[field];
-                }
-            }
-
-            return node.ToString();
-        }
-        */
     }
 }

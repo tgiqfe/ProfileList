@@ -1,5 +1,4 @@
 ﻿
-
 using TestProject.Manifest;
 
 
@@ -35,7 +34,7 @@ else
                         {
                             TestType = "key",
                             TestCode = "/networkInterface/[0]/name",
-                            Expected = "Wi-Fi"
+                            Expected = "イーサネット"
                         }
                     }
                 }
@@ -51,22 +50,10 @@ setting.TestCase.ActionList.ForEach(x =>
 
 setting.TestCase.ActionList.ForEach(x =>
 {
+    var server = $"{setting.TestCase.Server_Protocol}://{setting.TestCase.Server_Address}:{setting.TestCase.Server_Port}";
+    
     var url = $"{setting.TestCase.Server_Protocol}://{setting.TestCase.Server_Address}:{setting.TestCase.Server_Port}{x.Address}";
     x.Send(url).Wait();
-
-    //string json = x.GetJsonResponseBody();
-    //Console.WriteLine(json);
-
-    /*
-    x.GetNodeValue("networkInterface").ToList().ForEach(y =>
-    {
-        Console.WriteLine(y);
-    });
-    */
-    //var ntw = x.GetNodeValue("/networkInterface/[0]/name");
-    //Console.WriteLine(ntw);
-
-    x.TestStart();
 });
 
 

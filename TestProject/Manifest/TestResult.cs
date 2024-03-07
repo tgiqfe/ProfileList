@@ -37,15 +37,15 @@ namespace TestProject.Manifest
         //[YamlIgnore]
         public string Actual { get; set; }
 
-        public void SetResponseParameter(ResponseSet responseSet)
+        public void SetResponseParameter(ResponseSet responseSet, string server)
         {
-            switch(TestType)
+            switch (TestType)
             {
                 case "key":
                     Actual = GetNodeValue(TestCode, responseSet.Node);
                     break;
                 case "log":
-                    Actual = responseSet.Content;
+                    Actual = GetLogValue(server);
                     break;
                 default:
                     break;
@@ -55,12 +55,12 @@ namespace TestProject.Manifest
         /// <summary>
         /// 対象の値までのパスからNodeの値を取得する
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="code"></param>
         /// <returns></returns>
-        public string GetNodeValue(string key, JsonNode node)
+        public string GetNodeValue(string code, JsonNode node)
         {
             var pat_index = new Regex(@"\[\d+\]");
-            foreach (var field in key.Split("/"))
+            foreach (var field in code.Split("/"))
             {
                 if (string.IsNullOrEmpty(field)) continue;
                 if (pat_index.IsMatch(field))
@@ -75,6 +75,22 @@ namespace TestProject.Manifest
             }
 
             return node.ToString();
+        }
+
+        public string GetLogValue(string server)
+        {
+            string url = $"{server}/api/log/print";
+            var data = new StringContent("{ \"request\": 1 }", Encoding.UTF8, TestAction.CONTENT_TYPE_JSON);
+            using (var client = new HttpClient())
+            {
+                var response = client.PostAsync(url, data).Result;
+                var content = response.Content.ReadAsStringAsync().Result;
+                var node = JsonNode.Parse(content,
+                    new JsonNodeOptions() { PropertyNameCaseInsensitive = true });
+                
+
+                return GetNodeValue(TestCode, node);
+            }
         }
     }
 }
