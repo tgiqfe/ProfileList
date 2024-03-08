@@ -119,65 +119,12 @@ namespace TestProject.Manifest
         }
 
         /// <summary>
-        /// Httpリクエストを送信する
+        /// HTTPリクエストを送信
         /// </summary>
-        /// <param name="url"></param>
+        /// <param name="server"></param>
+        /// <param name="address"></param>
         /// <returns></returns>
         public async Task Send(string server, string address)
-        {
-            string url = $"{server}{address}";
-            ResponseSet = new() { Server = server };
-            using (var data = new StringContent(
-                this.ContentType switch
-                {
-                    CONTENT_TYPE_FORM => string.Join("&", this.BodpyParameters.Select(x => $"{x.Key}={x.Value}")),
-                    CONTENT_TYPE_JSON => JsonSerializer.Serialize(this.BodpyParameters),
-                    _ => "",
-                }, Encoding.UTF8, this.ContentType))
-            using (var client = new HttpClient())
-            {
-                ResponseSet.Response = this.Method switch
-                {
-                    METHOD_GET => await client.GetAsync(url),
-                    METHOD_POST => await client.PostAsync(url, data),
-                    METHOD_PUT => await client.PutAsync(url, data),
-                    METHOD_DELETE => await client.SendAsync(new HttpRequestMessage()
-                    {
-                        Method = HttpMethod.Delete,
-                        RequestUri = new Uri(url),
-                        Content = data
-                    }),
-                    _ => null,
-                };
-            }
-
-            using (var ms = new MemoryStream())
-            using (var reader = JsonReaderWriterFactory.CreateJsonReader(ResponseSet.Response.Content.ReadAsStream(), XmlDictionaryReaderQuotas.Max))
-            using (var writer = JsonReaderWriterFactory.CreateJsonWriter(ms, Encoding.UTF8, true, true))
-            {
-                writer.WriteNode(reader, true);
-                writer.Flush();
-                ResponseSet.Content = Encoding.UTF8.GetString(ms.ToArray());
-            }
-
-            ResponseSet.Node = JsonNode.Parse(
-                ResponseSet.Content,
-                new JsonNodeOptions() { PropertyNameCaseInsensitive = true });
-
-            if (this.TestResults != null)
-            {
-                foreach (var result in this.TestResults)
-                {
-                    result.SetResponseParameter(ResponseSet);
-                }
-            }
-        }
-
-
-
-
-
-        public async Task Send2(string server, string address)
         {
             string url = $"{server}{address}";
             this.ResponseSet = new() { Server = server };

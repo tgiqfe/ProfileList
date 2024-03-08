@@ -109,7 +109,5 @@ namespace TestProject.Manifest
                 }
             }
         }
-
-
     }
 }

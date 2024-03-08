@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.Marshalling;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,20 +15,13 @@ namespace TestProject.Manifest
     /// </summary>
     internal class TestCaseSetting
     {
-        public TestCase TestCase { get; set; }
-
-        /// <summary>
-        /// 初期設定
-        /// </summary>
-        public void Init()
-        {
-        }
+        public List<TestCase> TestCaseList { get; set; }
 
         /// <summary>
         /// ファイルから読み込んで、TestCaseSettingクラスを生成
         /// </summary>
         /// <returns></returns>
-        public static TestCaseSetting Load()
+        public static TestCaseSetting Load2()
         {
             string path = Path.Combine(Item.WorkingDirectory, "testcase.yml");
             TestCaseSetting tc = null;
@@ -37,12 +31,34 @@ namespace TestProject.Manifest
                 tc = new Deserializer().Deserialize<TestCaseSetting>(content);
             }
             catch { }
-            if(tc == null)
+            if (tc == null)
             {
                 tc = new();
-                tc.Init();
+                //tc.Init();
             }
             return tc;
+        }
+
+        public TestCaseSetting()
+        {
+            this.TestCaseList = new();
+            string parent = Path.Combine(Item.WorkingDirectory, "TestCases");
+            if (!Directory.Exists(parent))
+            {
+                Directory.CreateDirectory(parent);
+            }
+            foreach (string path in Directory.GetFiles(parent, "*.yml"))
+            {
+                TestCase tc = null;
+                try
+                {
+                    string content = File.ReadAllText(path);
+                    tc = new Deserializer().Deserialize<TestCase>(content);
+                }
+                catch { }
+                tc ??= new TestCase();
+                TestCaseList.Add(tc);
+            }
         }
 
         /// <summary>
