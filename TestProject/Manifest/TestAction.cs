@@ -1,14 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization.Json;
-using System.Text;
+﻿using System.Text;
 using System.Text.Json;
-using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Xml;
 using YamlDotNet.Serialization;
 
 namespace TestProject.Manifest
@@ -80,11 +72,16 @@ namespace TestProject.Manifest
         /// </summary>
         public Dictionary<string, string> BodpyParameters { get; set; }
 
-        public List<TestResult> TestResults { get; set; }
+        /// <summary>
+        /// テスト結果を格納するリスト
+        /// </summary>
+        public List<TestResult> Results { get; set; }
 
         #endregion
 
-        private ResponseSet _responseSet { get; set; }
+        [JsonIgnore]
+        [YamlIgnore]
+        private ResponseSet ResponseSet { get; set; }
 
         /// <summary>
         /// curlコマンドを生成する
@@ -116,92 +113,32 @@ namespace TestProject.Manifest
             return sb.ToString();
         }
 
-        public string GetBodyData()
-        {
-            return this.ContentType switch
-            {
-                CONTENT_TYPE_FORM => string.Join("&", this.BodpyParameters.Select(x => $"{x.Key}={x.Value}")),
-                CONTENT_TYPE_JSON => JsonSerializer.Serialize(this.BodpyParameters),
-                _ => ""
-            };
-        }
-
         /// <summary>
-        /// Httpリクエストを送信する
+        /// HTTPリクエストを送信
         /// </summary>
-        /// <param name="url"></param>
+        /// <param name="server"></param>
+        /// <param name="address"></param>
         /// <returns></returns>
         public async Task Send(string server, string address)
         {
-            string url = $"{server}{address}";
-            _responseSet = new() { Server = server };
-            using (var data = new StringContent(GetBodyData(), Encoding.UTF8, this.ContentType))
+            this.ResponseSet = new(server, address);
+            using (var data = new StringContent(
+                this.ContentType switch
+                {
+                    CONTENT_TYPE_FORM => string.Join("&", this.BodpyParameters.Select(x => $"{x.Key}={x.Value}")),
+                    CONTENT_TYPE_JSON => JsonSerializer.Serialize(this.BodpyParameters),
+                    _ => "",
+                }, Encoding.UTF8, this.ContentType))
             using (var client = new HttpClient())
             {
-                _responseSet.Response = this.Method switch
-                {
-                    METHOD_GET => await client.GetAsync(url),
-                    METHOD_POST => await client.PostAsync(url, data),
-                    METHOD_PUT => await client.PutAsync(url, data),
-                    METHOD_DELETE => await client.SendAsync(new HttpRequestMessage()
-                    {
-                        Method = HttpMethod.Delete,
-                        RequestUri = new Uri(url),
-                        Content = data
-                    }),
-                    _ => null,
-                };
+                await this.ResponseSet.SendAsync(client, this.Method, data);
             }
 
-            using (var ms = new MemoryStream())
-            using (var reader = JsonReaderWriterFactory.CreateJsonReader(_responseSet.Response.Content.ReadAsStream(), XmlDictionaryReaderQuotas.Max))
-            using (var writer = JsonReaderWriterFactory.CreateJsonWriter(ms, Encoding.UTF8, true, true))
+            if (this.Results?.Count > 0)
             {
-                writer.WriteNode(reader, true);
-                writer.Flush();
-                _responseSet.Content = Encoding.UTF8.GetString(ms.ToArray());
-            }
-
-            _responseSet.Node = JsonNode.Parse(
-                _responseSet.Content,
-                new JsonNodeOptions() { PropertyNameCaseInsensitive = true });
-
-            if (this.TestResults != null)
-            {
-                foreach (var result in this.TestResults)
+                foreach (var result in this.Results)
                 {
-                    result.SetResponseParameter(_responseSet, server);
-                }
-            }
-        }
-
-
-
-
-
-        public async Task Send2(string server, string address)
-        {
-            string url = $"{server}{address}";
-            _responseSet = new() { Server = server };
-
-            using (var data = new StringContent(GetBodyData(), Encoding.UTF8, this.ContentType))
-            using (var client = new HttpClient())
-            {
-                switch (this.Method)
-                {
-                    case METHOD_GET: await _responseSet.SendGetAsync(client, url); break;
-                    case METHOD_POST: await _responseSet.SendPostAsync(client, url, data); break;
-                    case METHOD_PUT: await _responseSet.SendPutAsync(client, url, data); break;
-                    case METHOD_DELETE: await _responseSet.SendDeleteAsync(client, url, data); break;
-                    default: break;
-                }
-            }
-
-            if (this.TestResults?.Count > 0)
-            {
-                foreach (var result in this.TestResults)
-                {
-                    result.SetResponseParameter(_responseSet, server);
+                    result.SetResponseParameter(ResponseSet);
                 }
             }
         }

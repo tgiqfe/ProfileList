@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TestProject.Manifest
+﻿namespace TestProject.Manifest
 {
     /// <summary>
     /// テストケースの設定
@@ -30,6 +24,6 @@ namespace TestProject.Manifest
         /// <summary>
         /// テスト動作のリスト
         /// </summary>
-        public List<TestAction> ActionList { get; set; }
+        public List<TestAction> Actions { get; set; }
     }
 }

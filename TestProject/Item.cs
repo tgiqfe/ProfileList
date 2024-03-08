@@ -10,6 +10,5 @@ namespace TestProject
     internal class Item
     {
         public static string WorkingDirectory = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
-
     }
 }

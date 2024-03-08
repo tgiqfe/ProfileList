@@ -1,76 +1,52 @@
 ﻿
+using System.Text.Json;
 using TestProject.Manifest;
 
+TestFileCollection collection = new();
 
-bool isCreate = false;
-
-TestCaseSetting setting = null;
-if (isCreate)
+/*
+collection.Files = new()
 {
-    setting = TestCaseSetting.Load();
-}
-else
-{
-    setting = new()
+    new TestFile()
     {
-        TestCase = new TestCase
+        FileName = "01_ProfileList_[Api_Profile_List].yml",
+        TestCase = new()
         {
-            ServerProtocol = "http",
-            ServerAddress = "localhost",
-            ServerPort = 5000,
-            ActionList = new List<TestAction>
+            List = new()
             {
-                new TestAction
+                new TestCase()
                 {
-                    Address = "/api/server/network",
-                    Method = "POST",
-                    BodpyParameters = new Dictionary<string, string>
+                    ServerProtocol = "http",
+                    ServerAddress = "localhost",
+                    ServerPort = 5000,
+                    Actions = new()
                     {
-                        { "refresh", "true" }
-                    },
-                    TestResults = new List<TestResult>
-                    {
-                        new TestResult
+                        new TestAction()
                         {
-                            TestType = "key",
-                            TestCode = "/networkInterface/[0]/name",
-                            Expected = "イーサネット"
-                        },
-                        new TestResult
-                        {
-                            TestType = "log",
-                            TestCode = "line=1",
-                            Expected = "[POST]Get Network Info."
-                        },
-                        new TestResult
-                        {
-                            TestType = "log",
-                            TestCode = "line=10",
-                            Expected = "[POST]Get Network Info."
+                            Address = "/api/profile/list",
+                            Method = TestAction.METHOD_GET,
+                            Results = new()
+                            {
+                                new TestResult()
+                                {
+                                    TestType = "key",
+                                    TestCode = "/profiles/[0]/userName",
+                                    Expected = "User",
+                                }
+                            }
                         }
-                    }
+                    },
                 }
             }
         }
-    };
-}
+    }
+};
+*/
 
-setting.TestCase.ActionList.ForEach(x =>
-    Console.WriteLine(x.toCurlCommand($"{setting.TestCase.ServerProtocol}://{setting.TestCase.ServerAddress}:{setting.TestCase.ServerPort}{x.Address}")));
+//string json = JsonSerializer.Serialize(collection, new JsonSerializerOptions { WriteIndented = true });
+//Console.WriteLine(json);
 
-
-
-setting.TestCase.ActionList.ForEach(x =>
-{
-    var server = $"{setting.TestCase.ServerProtocol}://{setting.TestCase.ServerAddress}:{setting.TestCase.ServerPort}";
-
-    //var url = $"{setting.TestCase.Server_Protocol}://{setting.TestCase.Server_Address}:{setting.TestCase.Server_Port}{x.Address}";
-    x.Send(server, x.Address).Wait();
-});
-
-
-setting.Save();
-
+collection.Save();
 
 
 Console.ReadLine();

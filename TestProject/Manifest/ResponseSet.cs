@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization.Json;
+﻿using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Text.Json.Nodes;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 using System.Xml;
-using YamlDotNet.Serialization;
 
 namespace TestProject.Manifest
 {
@@ -16,6 +10,8 @@ namespace TestProject.Manifest
     /// </summary>
     internal class ResponseSet
     {
+        #region public parameter
+
         /// <summary>
         /// レスポンス
         /// </summary>
@@ -37,9 +33,61 @@ namespace TestProject.Manifest
         public string Server { get; set; }
 
         /// <summary>
+        /// テスト左記サーバのアドレス (例: /api/hello)
+        /// </summary>
+        public string Address { get; set; }
+
+        /// <summary>
         /// テスト動作1つに対して、ログを取得して格納
         /// </summary>
         public string[] StoredLog { get; set; }
+
+        #endregion
+
+        public ResponseSet() { }
+        public ResponseSet(string server, string address)
+        {
+            this.Server = server;
+            this.Address = address;
+        }
+
+        /// <summary>
+        /// Requestを送信して、レスポンスを格納
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="server"></param>
+        /// <param name="address"></param>
+        /// <param name="method"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public async Task SendAsync(HttpClient client, string method, StringContent data)
+        {
+            string url = $"{this.Server}{this.Address}";
+            this.Response = method switch
+            {
+                TestAction.METHOD_GET => await client.GetAsync(url),
+                TestAction.METHOD_POST => await client.PostAsync(url, data),
+                TestAction.METHOD_PUT => await client.PutAsync(url, data),
+                TestAction.METHOD_DELETE => await client.SendAsync(new HttpRequestMessage()
+                {
+                    Method = HttpMethod.Delete,
+                    RequestUri = new Uri(url),
+                    Content = data
+                }),
+                _ => null
+            };
+            using (var ms = new MemoryStream())
+            using (var reader = JsonReaderWriterFactory.CreateJsonReader(this.Response.Content.ReadAsStream(), XmlDictionaryReaderQuotas.Max))
+            using (var writer = JsonReaderWriterFactory.CreateJsonWriter(ms, Encoding.UTF8, true, true))
+            {
+                writer.WriteNode(reader, true);
+                writer.Flush();
+                this.Content = Encoding.UTF8.GetString(ms.ToArray());
+            }
+            this.Node = JsonNode.Parse(
+                this.Content,
+                new JsonNodeOptions() { PropertyNameCaseInsensitive = true });
+        }
 
         /// <summary>
         /// /api/log/print で、、request=1のリクエストを送信して、
@@ -60,58 +108,6 @@ namespace TestProject.Manifest
                     this.StoredLog = node["log"].AsArray().Select(x => x.ToString()).ToArray();
                 }
             }
-        }
-
-        public async Task SendGetAsync(HttpClient client, string url)
-        {
-            this.Response = await client.GetAsync(url);
-            SetContent();
-            SetNode();
-        }
-
-        public async Task SendPostAsync(HttpClient client, string url, StringContent data)
-        {
-            this.Response = await client.PostAsync(url, data);
-            SetContent();
-            SetNode();
-        }
-
-        public async Task SendPutAsync(HttpClient client, string url, StringContent data)
-        {
-            this.Response = await client.PutAsync(url, data);
-            SetContent();
-            SetNode();
-        }
-
-        public async Task SendDeleteAsync(HttpClient client, string url, StringContent data)
-        {
-            this.Response = await client.SendAsync(new HttpRequestMessage()
-            {
-                Method = HttpMethod.Delete,
-                RequestUri = new Uri(url),
-                Content = data
-            });
-            SetContent();
-            SetNode();
-        }
-
-        public void SetContent()
-        {
-            using (var ms = new MemoryStream())
-            using (var reader = JsonReaderWriterFactory.CreateJsonReader(this.Response.Content.ReadAsStream(), XmlDictionaryReaderQuotas.Max))
-            using (var writer = JsonReaderWriterFactory.CreateJsonWriter(ms, Encoding.UTF8, true, true))
-            {
-                writer.WriteNode(reader, true);
-                writer.Flush();
-                this.Content = Encoding.UTF8.GetString(ms.ToArray());
-            }
-        }
-
-        public void SetNode()
-        {
-            this.Node = JsonNode.Parse(
-                this.Content,
-                new JsonNodeOptions() { PropertyNameCaseInsensitive = true });
         }
     }
 }
