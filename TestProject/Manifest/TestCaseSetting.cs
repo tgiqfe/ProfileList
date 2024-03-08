@@ -15,34 +15,18 @@ namespace TestProject.Manifest
     /// </summary>
     internal class TestCaseSetting
     {
-        public List<TestCase> TestCaseList { get; set; }
+        //private const string PARENT_NAME = "TestCases";
 
         /// <summary>
-        /// ファイルから読み込んで、TestCaseSettingクラスを生成
+        /// テストケースを格納するリスト
         /// </summary>
-        /// <returns></returns>
-        public static TestCaseSetting Load2()
-        {
-            string path = Path.Combine(Item.WorkingDirectory, "testcase.yml");
-            TestCaseSetting tc = null;
-            try
-            {
-                string content = File.ReadAllText(path);
-                tc = new Deserializer().Deserialize<TestCaseSetting>(content);
-            }
-            catch { }
-            if (tc == null)
-            {
-                tc = new();
-                //tc.Init();
-            }
-            return tc;
-        }
+        public List<TestCase> List { get; set; } = new();
 
         public TestCaseSetting()
         {
+            /*
             this.TestCaseList = new();
-            string parent = Path.Combine(Item.WorkingDirectory, "TestCases");
+            string parent = Path.Combine(Item.WorkingDirectory, PARENT_NAME);
             if (!Directory.Exists(parent))
             {
                 Directory.CreateDirectory(parent);
@@ -57,20 +41,27 @@ namespace TestProject.Manifest
                 }
                 catch { }
                 tc ??= new TestCase();
+                tc.FileName = Path.GetFileName(path);
                 TestCaseList.Add(tc);
             }
+            */
         }
 
+        /*
         /// <summary>
-        /// TestCaseSettingクラスをファイルに保存
+        /// 各TestCaseをファイルに保存
         /// </summary>
         public void Save()
         {
-            string path = Path.Combine(Item.WorkingDirectory, "testcase.yml");
-            string content = new SerializerBuilder().
-                WithEventEmitter(x => new MultilineScalarFlowStyleEmitter(x)).
-                Build().Serialize(this);
-            File.WriteAllText(path, content);
+            foreach (var tc in this.List)
+            {
+                string path = Path.Combine(Item.WorkingDirectory, PARENT_NAME, tc.FileName);
+                string content = new SerializerBuilder().
+                    WithEventEmitter(x => new MultilineScalarFlowStyleEmitter(x)).
+                    Build().Serialize(this);
+                File.WriteAllText(path, content);
+            }
         }
+        */
     }
 }

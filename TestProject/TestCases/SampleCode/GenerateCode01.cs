@@ -11,58 +11,50 @@ namespace TestProject.TestCases.SampleCode
     {
         public static void Generate01()
         {
-            bool isCreate = true;
-
             TestCaseSetting setting = null;
-            if (isCreate)
+
+            setting = new()
             {
-                setting = TestCaseSetting.Load2();
-            }
-            else
-            {
-                setting = new()
+                List = new List<TestCase>() { new TestCase()
                 {
-                    TestCaseList = new List<TestCase>() { new TestCase()
+                    ServerProtocol = "http",
+                    ServerAddress = "localhost",
+                    ServerPort = 5000,
+                    ActionList = new List<TestAction>
                     {
-                        ServerProtocol = "http",
-                        ServerAddress = "localhost",
-                        ServerPort = 5000,
-                        ActionList = new List<TestAction>
+                        new TestAction
                         {
-                            new TestAction
+                            Address = "/api/server/network",
+                            Method = "POST",
+                            BodpyParameters = new Dictionary<string, string>
                             {
-                                Address = "/api/server/network",
-                                Method = "POST",
-                                BodpyParameters = new Dictionary<string, string>
+                                { "refresh", "true" }
+                            },
+                            TestResultList = new List<TestResult>
+                            {
+                                new TestResult
                                 {
-                                    { "refresh", "true" }
+                                    TestType = "key",
+                                    TestCode = "/networkInterface/[0]/name",
+                                    Expected = "イーサネット"
                                 },
-                                TestResults = new List<TestResult>
+                                new TestResult
                                 {
-                                    new TestResult
-                                    {
-                                        TestType = "key",
-                                        TestCode = "/networkInterface/[0]/name",
-                                        Expected = "イーサネット"
-                                    },
-                                    new TestResult
-                                    {
-                                        TestType = "log",
-                                        TestCode = "line=1",
-                                        Expected = "[POST]Get Network Info."
-                                    },
-                                    new TestResult
-                                    {
-                                        TestType = "log",
-                                        TestCode = "line=10",
-                                        Expected = "[POST]Get Network Info."
-                                    }
+                                    TestType = "log",
+                                    TestCode = "line=1",
+                                    Expected = "[POST]Get Network Info."
+                                },
+                                new TestResult
+                                {
+                                    TestType = "log",
+                                    TestCode = "line=10",
+                                    Expected = "[POST]Get Network Info."
                                 }
                             }
                         }
-                    }}
-                };
-            }
+                    }
+                }}
+            };
         }
     }
 }

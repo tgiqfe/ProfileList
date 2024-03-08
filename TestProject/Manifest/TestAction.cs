@@ -80,7 +80,10 @@ namespace TestProject.Manifest
         /// </summary>
         public Dictionary<string, string> BodpyParameters { get; set; }
 
-        public List<TestResult> TestResults { get; set; }
+        /// <summary>
+        /// テスト結果を格納するリスト
+        /// </summary>
+        public List<TestResult> TestResultList { get; set; }
 
         #endregion
 
@@ -141,9 +144,9 @@ namespace TestProject.Manifest
                 await this.ResponseSet.SendAsync(client, server, address, this.Method, data);
             }
 
-            if (this.TestResults?.Count > 0)
+            if (this.TestResultList?.Count > 0)
             {
-                foreach (var result in this.TestResults)
+                foreach (var result in this.TestResultList)
                 {
                     result.SetResponseParameter(ResponseSet);
                 }
