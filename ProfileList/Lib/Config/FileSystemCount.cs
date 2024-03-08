@@ -13,6 +13,7 @@
         public bool IsFinished { get; set; }
 
         private string _targetPath = null;
+        private bool _isDuring = false;
 
         public FileSystemCount(string targetPath, bool countStart = false)
         {
@@ -31,19 +32,23 @@
 
         public async void CountStartAsync()
         {
-            if (IsFinished) return;
+            if (IsFinished || _isDuring) return;
             await Task.Run(() =>
             {
+                _isDuring = true;
                 CountUp(new DirectoryInfo(_targetPath));
                 IsFinished = true;
+                _isDuring = false;
             });
         }
 
         public void CountStart()
         {
-            if (IsFinished) return;
+            if (IsFinished || _isDuring) return;
+            _isDuring = true;
             CountUp(new DirectoryInfo(_targetPath));
             IsFinished = true;
+            _isDuring = false;
         }
 
         private void CountUp(DirectoryInfo di)

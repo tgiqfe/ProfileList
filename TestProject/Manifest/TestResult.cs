@@ -37,7 +37,7 @@ namespace TestProject.Manifest
         //[YamlIgnore]
         public string Actual { get; set; }
 
-        public void SetResponseParameter(ResponseSet responseSet, string server)
+        public void SetResponseParameter(ResponseSet responseSet)
         {
             switch (TestType)
             {

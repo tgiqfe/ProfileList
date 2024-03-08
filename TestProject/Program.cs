@@ -63,8 +63,6 @@ setting.TestCase.ActionList.ForEach(x =>
 setting.TestCase.ActionList.ForEach(x =>
 {
     var server = $"{setting.TestCase.ServerProtocol}://{setting.TestCase.ServerAddress}:{setting.TestCase.ServerPort}";
-
-    //var url = $"{setting.TestCase.Server_Protocol}://{setting.TestCase.Server_Address}:{setting.TestCase.Server_Port}{x.Address}";
     x.Send(server, x.Address).Wait();
 });
 
