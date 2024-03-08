@@ -4,6 +4,7 @@ using TestProject.Manifest;
 
 TestFileCollection collection = new();
 
+/*
 collection.Files = new()
 {
     new TestFile()
@@ -40,10 +41,10 @@ collection.Files = new()
         }
     }
 };
+*/
 
-
-string json = JsonSerializer.Serialize(collection, new JsonSerializerOptions { WriteIndented = true });
-Console.WriteLine(json);
+//string json = JsonSerializer.Serialize(collection, new JsonSerializerOptions { WriteIndented = true });
+//Console.WriteLine(json);
 
 collection.Save();
 

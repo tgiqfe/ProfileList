@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization.Json;
+﻿using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Text.Json.Nodes;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 using System.Xml;
-using YamlDotNet.Serialization;
 
 namespace TestProject.Manifest
 {

@@ -67,7 +67,17 @@ namespace TestProject.Manifest
                 if (pat_index.IsMatch(field))
                 {
                     int index = int.Parse(field.TrimStart('[').TrimEnd(']'));
-                    node = node[index];
+                    if (index >= 0)
+                    {
+                        //  indexが正の場合は通常どおりに要素を探す
+                        node = node[index];
+                    }
+                    else
+                    {
+                        //  indexが負の場合は後ろから数えて要素を探す
+                        int length = node.AsArray().Count();
+                        node = node[length + index];
+                    }
                 }
                 else
                 {

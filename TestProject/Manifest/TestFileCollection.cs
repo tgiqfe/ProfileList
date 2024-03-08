@@ -14,6 +14,9 @@ namespace TestProject.Manifest
 
         public List<TestFile> Files { get; set; }
 
+        /// <summary>
+        /// マニフェストファイルを詠み込んでセット
+        /// </summary>
         public TestFileCollection()
         {
             this.Files = new();
@@ -37,6 +40,9 @@ namespace TestProject.Manifest
             }
         }
 
+        /// <summary>
+        /// マニフェストファイルを保存
+        /// </summary>
         public void Save()
         {
             foreach (var file in this.Files)

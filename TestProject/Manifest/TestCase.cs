@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using TestProject.Lib;
-using YamlDotNet.Serialization;
-
-namespace TestProject.Manifest
+﻿namespace TestProject.Manifest
 {
     /// <summary>
     /// テストケースの設定
