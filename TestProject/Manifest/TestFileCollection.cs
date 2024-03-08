@@ -44,7 +44,9 @@ namespace TestProject.Manifest
                 string path = Path.Combine(Item.WorkingDirectory, PARENT_NAME, file.FileName);
                 string content = new SerializerBuilder().
                     WithEventEmitter(x => new MultilineScalarFlowStyleEmitter(x)).
-                    Build().Serialize(file);
+                    WithEmissionPhaseObjectGraphVisitor(x => new YamlIEnumerableSkipEmptyObjectGraphVisitor(x.InnerVisitor)).
+                    Build().
+                    Serialize(file);
                 File.WriteAllText(path, content);
             }
         }

@@ -3,6 +3,7 @@ using System.Text.Json;
 using TestProject.Manifest;
 
 TestFileCollection collection = new();
+
 collection.Files = new()
 {
     new TestFile()
@@ -17,13 +18,13 @@ collection.Files = new()
                     ServerProtocol = "http",
                     ServerAddress = "localhost",
                     ServerPort = 5000,
-                    ActionList = new()
+                    Actions = new()
                     {
                         new TestAction()
                         {
                             Address = "/api/profile/list",
                             Method = TestAction.METHOD_GET,
-                            TestResultList = new()
+                            Results = new()
                             {
                                 new TestResult()
                                 {
@@ -40,33 +41,6 @@ collection.Files = new()
     }
 };
 
-
-/*
-collection.TestCaseSetting.List.Add(new TestCase()
-{
-    FileName = "01_ProfileList_[Api_Profile_List].yml",
-    ServerProtocol = "http",
-    ServerAddress = "localhost",
-    ServerPort = 5000,
-    ActionList = new List<TestAction>()
-    {
-        new TestAction()
-        {
-            Address = "/api/profile/list",
-            Method = TestAction.METHOD_GET,
-            TestResultList = new()
-            {
-                new TestResult()
-                {
-                    TestType = "key",
-                    TestCode = "/profiles/[0]/userName",
-                    Expected = "User",
-                }
-            }
-        }
-    },
-});
-*/
 
 string json = JsonSerializer.Serialize(collection, new JsonSerializerOptions { WriteIndented = true });
 Console.WriteLine(json);

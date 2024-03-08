@@ -33,6 +33,6 @@ namespace TestProject.Manifest
         /// <summary>
         /// テスト動作のリスト
         /// </summary>
-        public List<TestAction> ActionList { get; set; }
+        public List<TestAction> Actions { get; set; }
     }
 }

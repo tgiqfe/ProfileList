@@ -20,7 +20,7 @@ namespace TestProject.TestCases.SampleCode
                     ServerProtocol = "http",
                     ServerAddress = "localhost",
                     ServerPort = 5000,
-                    ActionList = new List<TestAction>
+                    Actions = new List<TestAction>
                     {
                         new TestAction
                         {
@@ -30,7 +30,7 @@ namespace TestProject.TestCases.SampleCode
                             {
                                 { "refresh", "true" }
                             },
-                            TestResultList = new List<TestResult>
+                            Results = new List<TestResult>
                             {
                                 new TestResult
                                 {

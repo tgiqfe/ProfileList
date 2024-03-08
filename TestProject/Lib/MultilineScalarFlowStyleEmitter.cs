@@ -9,6 +9,9 @@ using YamlDotNet.Serialization.EventEmitters;
 
 namespace TestProject.Lib
 {
+    /// <summary>
+    /// 複数行の文字列を、>-形式から|-形式に変換するEmitter
+    /// </summary>
     internal class MultilineScalarFlowStyleEmitter : ChainedEventEmitter
     {
         public MultilineScalarFlowStyleEmitter(IEventEmitter nextEmitter) : base(nextEmitter) { }

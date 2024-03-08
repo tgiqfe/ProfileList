@@ -50,6 +50,13 @@ namespace TestProject.Manifest
 
         #endregion
 
+        public ResponseSet() { }
+        public ResponseSet(string server, string address)
+        {
+            this.Server = server;
+            this.Address = address;
+        }
+
         /// <summary>
         /// Requestを送信して、レスポンスを格納
         /// </summary>
@@ -59,19 +66,18 @@ namespace TestProject.Manifest
         /// <param name="method"></param>
         /// <param name="data"></param>
         /// <returns></returns>
-        public async Task SendAsync(HttpClient client, string server, string address, string method, StringContent data)
+        public async Task SendAsync(HttpClient client, string method, StringContent data)
         {
-            this.Server = server;
-            this.Address = address;
+            string url = $"{this.Server}{this.Address}";
             this.Response = method switch
             {
-                TestAction.METHOD_GET => await client.GetAsync($"{server}{address}"),
-                TestAction.METHOD_POST => await client.PostAsync($"{server}{address}", data),
-                TestAction.METHOD_PUT => await client.PutAsync($"{server}{address}", data),
+                TestAction.METHOD_GET => await client.GetAsync(url),
+                TestAction.METHOD_POST => await client.PostAsync(url, data),
+                TestAction.METHOD_PUT => await client.PutAsync(url, data),
                 TestAction.METHOD_DELETE => await client.SendAsync(new HttpRequestMessage()
                 {
                     Method = HttpMethod.Delete,
-                    RequestUri = new Uri($"{server}{address}"),
+                    RequestUri = new Uri(url),
                     Content = data
                 }),
                 _ => null

@@ -1,14 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization.Json;
-using System.Text;
+﻿using System.Text;
 using System.Text.Json;
-using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Xml;
 using YamlDotNet.Serialization;
 
 namespace TestProject.Manifest
@@ -83,7 +75,7 @@ namespace TestProject.Manifest
         /// <summary>
         /// テスト結果を格納するリスト
         /// </summary>
-        public List<TestResult> TestResultList { get; set; }
+        public List<TestResult> Results { get; set; }
 
         #endregion
 
@@ -129,9 +121,7 @@ namespace TestProject.Manifest
         /// <returns></returns>
         public async Task Send(string server, string address)
         {
-            string url = $"{server}{address}";
-            this.ResponseSet = new() { Server = server };
-
+            this.ResponseSet = new(server, address);
             using (var data = new StringContent(
                 this.ContentType switch
                 {
@@ -141,12 +131,12 @@ namespace TestProject.Manifest
                 }, Encoding.UTF8, this.ContentType))
             using (var client = new HttpClient())
             {
-                await this.ResponseSet.SendAsync(client, server, address, this.Method, data);
+                await this.ResponseSet.SendAsync(client, this.Method, data);
             }
 
-            if (this.TestResultList?.Count > 0)
+            if (this.Results?.Count > 0)
             {
-                foreach (var result in this.TestResultList)
+                foreach (var result in this.Results)
                 {
                     result.SetResponseParameter(ResponseSet);
                 }
