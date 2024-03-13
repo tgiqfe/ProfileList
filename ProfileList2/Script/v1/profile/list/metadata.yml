@@ -1,0 +1,6 @@
+﻿metadata:
+  name: ProfileList
+  description: 'Show user profile list'
+  scriptPath: ShowUserProfileList.ps1
+  outputType: Console
+

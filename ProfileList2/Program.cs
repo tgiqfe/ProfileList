@@ -36,7 +36,6 @@ app.MapGet("/api/v1/{scriptGroup}/{scriptName}", (string scriptGroup, string scr
             }
             var node = JsonNode.Parse(sb.ToString());
 
-
             return new
             {
                 Result = "OK",
