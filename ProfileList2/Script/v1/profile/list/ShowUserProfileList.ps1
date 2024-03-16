@@ -1,8 +1,10 @@
 # Show user profile list
 
+. "..\..\Scripts\LogonSession.ps1"
+$userLogonSessions = , [UserLogonSession]::GetLoggedOnSession()
+
 $systemAccounts = (Get-CimInstance -ClassName "Win32_SystemAccount" | `
         Where-Object { $_.SID -ne $null }).SID
-
         
 $userProfiles = Get-CimInstance -ClassName "Win32_UserProfile" | `
     Where-Object { !($systemAccounts -contains $_.SID) }
@@ -10,7 +12,7 @@ $userAccount = Get-CimInstance -ClassName "Win32_UserAccount" | `
     Where-Object { $_.SID -ne $null }
 
 $list = @()
-foreach ($profile in $userProfile) {
+foreach ($profile in $userProfiles) {
     $profileParameter = [pscustomobject]@{
         UserName     = ""
         UserDomain   = ""
@@ -20,13 +22,20 @@ foreach ($profile in $userProfile) {
         IsLogon      = $false
         IsDomainuser = $false
     }
-    $user = $userAccount | Where-Object { $_.SID -eq $profile.SID }
-    if ($user -ne $null) {
-        $profileParameter.UserName = $user.Name
-        $profileParameter.UserDomain = $user.Domain
-        $profileParameter.Caption = $user.Caption
-        $profileParameter.IsDomainuser = !($user.LocalAccount)
-
+    $account = $userAccount | `
+        Where-Object { $_.SID -eq $profile.SID } | `
+        Select-Object -First 1
+    if ($null -ne $account) {
+        $profileParameter.UserName = $account.Name
+        $profileParameter.UserDomain = $account.Domain
+        $profileParameter.Caption = $account.Caption
+        $profileParameter.ProfilePath = $profile.LocalPath
+        $profileParameter.SID = $profile.SID
+        $profileParameter.IsLogon = $userLogonSessions | `
+            Where-Object { $_.UserName -eq $account.Name -and $_.UserDomain -eq $account.Domain } | `
+            Select-Object -First 1 | `
+            ForEach-Object { $_.IsActive() }
+        $profileParameter.IsDomainuser = !($account.LocalAccount)
     }
     else {
         $profileParameter.UserName = "-"
@@ -35,3 +44,4 @@ foreach ($profile in $userProfile) {
     $list += $profileParameter
 }
 
+,$list | ConvertTo-Json

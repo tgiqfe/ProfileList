@@ -10,7 +10,7 @@ namespace ProfileList2.Lib.ScriptLanguage
             {
                 Exe(),
                 Cmd(),
-                PowerShell(),
+                //PowerShell(),
                 Pwsh(),
                 WScript(),
                 Go(),

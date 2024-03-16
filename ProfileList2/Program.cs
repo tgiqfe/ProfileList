@@ -25,6 +25,7 @@ app.MapGet("/api/v1/{scriptGroup}/{scriptName}", (string scriptGroup, string scr
             {
                 proc.StartInfo.CreateNoWindow = true;
                 proc.StartInfo.UseShellExecute = false;
+                proc.StartInfo.WorkingDirectory = targetDir;
                 proc.StartInfo.RedirectStandardOutput = true;
                 proc.StartInfo.RedirectStandardError = true;
                 proc.OutputDataReceived += (sender, e) => sb.AppendLine(e.Data);
@@ -34,6 +35,7 @@ app.MapGet("/api/v1/{scriptGroup}/{scriptName}", (string scriptGroup, string scr
                 proc.BeginErrorReadLine();
                 proc.WaitForExit();
             }
+            Debug.WriteLine(sb.ToString());
             var node = JsonNode.Parse(sb.ToString());
 
             return new
