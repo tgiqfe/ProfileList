@@ -72,7 +72,7 @@ namespace ProfileList2.Lib.ScriptLanguage
             }
         }
 
-        public Process GetProcess(string path)
+        public Process GetProcess(string path, string arguments = "")
         {
             if (File.Exists(path))
             {
@@ -80,7 +80,7 @@ namespace ProfileList2.Lib.ScriptLanguage
                 var lang = this.Languages.FirstOrDefault(x =>
                     x.Extensions.Any(y =>
                         y.Equals(extension, StringComparison.OrdinalIgnoreCase)));
-                return lang?.GetProcess(path, "");
+                return lang?.GetProcess(path, arguments);
             }
             return null;
         }
