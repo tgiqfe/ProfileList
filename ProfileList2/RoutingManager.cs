@@ -23,7 +23,7 @@ namespace ProfileList2
                 var metadataPath = Path.Combine(targetDir, "metadata.yml");
                 string argsText = ToArgsText(context);
 
-                return ExecuteScript(targetDir, metadataPath, argsText);
+                return ExecuteScript(targetDir, metadataPath, argsText, "GET");
             });
 
             //  API v1 (POST)
@@ -33,7 +33,7 @@ namespace ProfileList2
                 var metadataPath = Path.Combine(targetDir, "metadata.yml");
                 var argsText = await ToArgsTextAsync(context);
 
-                return await ExecuteScriptAsync(targetDir, metadataPath, argsText);
+                return await ExecuteScriptAsync(targetDir, metadataPath, argsText, "POST");
             });
 
             //  API v1 (PUT)
@@ -43,7 +43,7 @@ namespace ProfileList2
                 var metadataPath = Path.Combine(targetDir, "metadata.yml");
                 var argsText = await ToArgsTextAsync(context);
 
-                return await ExecuteScriptAsync(targetDir, metadataPath, argsText);
+                return await ExecuteScriptAsync(targetDir, metadataPath, argsText, "PUT");
             });
 
             //  API v1 (DELETE)
@@ -53,7 +53,7 @@ namespace ProfileList2
                 var metadataPath = Path.Combine(targetDir, "metadata.yml");
                 var argsText = await ToArgsTextAsync(context);
 
-                return await ExecuteScriptAsync(targetDir, metadataPath, argsText);
+                return await ExecuteScriptAsync(targetDir, metadataPath, argsText, "DELETE");
             });
         }
 
@@ -112,7 +112,7 @@ namespace ProfileList2
         /// <param name="metadataPath"></param>
         /// <param name="argsText"></param>
         /// <returns></returns>
-        private dynamic ExecuteScript(string targetDir, string metadataPath, string argsText)
+        private dynamic ExecuteScript(string targetDir, string metadataPath, string argsText, string method)
         {
             try
             {
@@ -168,13 +168,15 @@ namespace ProfileList2
         /// <param name="metadataPath"></param>
         /// <param name="argsText"></param>
         /// <returns></returns>
-        private async Task<dynamic> ExecuteScriptAsync(string targetDir, string metadataPath, string argsText)
+        private async Task<dynamic> ExecuteScriptAsync(string targetDir, string metadataPath, string argsText, string method)
         {
             try
             {
                 if (File.Exists(metadataPath))
                 {
                     var metadata = MetadataFile.Load(metadataPath)?.Metadata;
+                    
+
                     var scriptPath = Path.Combine(targetDir, metadata.ScriptPath);
                     if (File.Exists(scriptPath))
                     {

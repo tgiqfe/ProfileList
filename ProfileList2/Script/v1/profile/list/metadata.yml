@@ -3,4 +3,5 @@
   description: 'Show user profile list'
   scriptPath: ShowUserProfileList.ps1
   outputType: Console
+  method: GET, POST
 

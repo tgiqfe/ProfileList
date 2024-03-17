@@ -1,4 +1,5 @@
-﻿using YamlDotNet.Serialization;
+﻿using System.Text.Json.Serialization;
+using YamlDotNet.Serialization;
 
 namespace ProfileList2.Lib
 {
@@ -18,5 +19,17 @@ namespace ProfileList2.Lib
 
         [YamlMember(Alias = "outputFilePath")]
         public string OutputFilePath { get; set; }
+
+        [YamlMember(Alias = "method")]
+        public string Method { get; set; }
+
+        public bool IsMatchMethod(string method)
+        {
+            return this.Method.
+                Split(",").
+                Select(x => x.Trim()).
+                Any(x => x.Equals(method, StringComparison.OrdinalIgnoreCase));
+        }
+
     }
 }
