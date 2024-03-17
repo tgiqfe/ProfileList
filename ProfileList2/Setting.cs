@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace ProfileList2
 {
@@ -20,6 +21,7 @@ namespace ProfileList2
         /// <summary>
         /// [PL_ProtectedProfile]パラメータを配列にして取得
         /// </summary>
+        [JsonIgnore]
         public string[] ProtectedProfileUsers
         {
             get
