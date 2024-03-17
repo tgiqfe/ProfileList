@@ -8,29 +8,15 @@ using System.Text.Json.Nodes;
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
-app.MapGet("/", () => "Hello World!");
+app.MapGet("/", () => "");
 
 
-app.MapGet("/api/{group}/{name}", (string group, string name, HttpContext context) =>
-{
-    StringBuilder sb = new();
-    foreach(var query in context.Request.Query)
-    {
-        sb.Append($"-{query.Key} ${query.Value}");
-    }
 
-    var text = sb.ToString();
-
-    return new
-    {
-        Result= text,
-    };
-});
 
 app.MapGet("/api/v1/{scriptGroup}/{scriptName}", (string scriptGroup, string scriptName, HttpContext context) =>
 {
     StringBuilder argsParameterText = new();
-    context.Request.Query.ToList().ForEach(x => argsParameterText.Append($"-{x.Key} {x.Value}"));
+    context.Request.Query.ToList().ForEach(x => argsParameterText.Append($" -{x.Key} {x.Value}"));
 
     var targetDir = Path.Combine(Item.WorkingDirectory, "v1", scriptGroup, scriptName);
     var metadataPath = Path.Combine(targetDir, "metadata.yml");
