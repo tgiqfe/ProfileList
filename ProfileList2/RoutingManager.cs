@@ -19,42 +19,78 @@ namespace ProfileList2
             //  API v1 (GET)
             app.MapGet("/api/v1/{scriptGroup}/{scriptName}", (string scriptGroup, string scriptName, HttpContext context) =>
             {
+                string method = "GET";
+                (bool isStop, dynamic ret) = SystemProcess(scriptGroup, scriptName, method);
+                if (isStop) { return ret; }
+
                 var targetDir = Path.Combine(Item.WorkingDirectory, "v1", scriptGroup, scriptName);
                 var metadataPath = Path.Combine(targetDir, "metadata.yml");
                 string argsText = ToArgsText(context);
 
-                return ExecuteScript(targetDir, metadataPath, argsText, "GET");
+                return ExecuteScript(targetDir, metadataPath, argsText, method);
             });
 
             //  API v1 (POST)
             app.MapPost("/api/v1/{scriptGroup}/{scriptName}", async (string scriptGroup, string scriptName, HttpContext context) =>
             {
+                string method = "POST";
+                (bool isStop, dynamic ret) = SystemProcess(scriptGroup, scriptName, method);
+                if (isStop) { return ret; }
+
                 var targetDir = Path.Combine(Item.WorkingDirectory, "v1", scriptGroup, scriptName);
                 var metadataPath = Path.Combine(targetDir, "metadata.yml");
                 var argsText = await ToArgsTextAsync(context);
 
-                return await ExecuteScriptAsync(targetDir, metadataPath, argsText, "POST");
+                return await ExecuteScriptAsync(targetDir, metadataPath, argsText, method);
             });
 
             //  API v1 (PUT)
             app.MapPut("/api/v1/{scriptGroup}/{scriptName}", async (string scriptGroup, string scriptName, HttpContext context) =>
             {
+                string method = "PUT";
+                (bool isStop, dynamic ret) = SystemProcess(scriptGroup, scriptName, method);
+                if (isStop) { return ret; }
+
                 var targetDir = Path.Combine(Item.WorkingDirectory, "v1", scriptGroup, scriptName);
                 var metadataPath = Path.Combine(targetDir, "metadata.yml");
                 var argsText = await ToArgsTextAsync(context);
 
-                return await ExecuteScriptAsync(targetDir, metadataPath, argsText, "PUT");
+                return await ExecuteScriptAsync(targetDir, metadataPath, argsText, method);
             });
 
             //  API v1 (DELETE)
             app.MapDelete("/api/v1/{scriptGroup}/{scriptName}", async (string scriptGroup, string scriptName, HttpContext context) =>
             {
+                string method = "DELETE";
+                (bool isStop, dynamic ret) = SystemProcess(scriptGroup, scriptName, method);
+                if (isStop) { return ret; }
+
                 var targetDir = Path.Combine(Item.WorkingDirectory, "v1", scriptGroup, scriptName);
                 var metadataPath = Path.Combine(targetDir, "metadata.yml");
                 var argsText = await ToArgsTextAsync(context);
 
-                return await ExecuteScriptAsync(targetDir, metadataPath, argsText, "DELETE");
+                return await ExecuteScriptAsync(targetDir, metadataPath, argsText, method);
             });
+        }
+
+        private (bool, dynamic) SystemProcess(string scriptGroup, string scriptname, string method)
+        {
+            //  サーバ終了 /api/v1/server/close
+            if ((method == "GET" || method == "POST") &&
+                scriptGroup == "server" && scriptname == "close")
+            {
+                Task.Run(() =>
+                {
+                    Task.Delay(1000);
+                    app.StopAsync();
+                });
+                return (true, new
+                {
+                    Status = "Close",
+                    Result = JsonNode.Parse("{}")
+                });
+            }
+            return (false, null);
         }
 
         /// <summary>
