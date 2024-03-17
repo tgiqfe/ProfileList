@@ -30,6 +30,5 @@ namespace ProfileList2.Lib
                 Select(x => x.Trim()).
                 Any(x => x.Equals(method, StringComparison.OrdinalIgnoreCase));
         }
-
     }
 }

@@ -9,7 +9,6 @@ namespace ProfileList2
 
         public static LanguageCollection LanguageCollection = LanguageCollection.Load(Path.Combine(WorkingDirectory, "languages.json"));
 
-
-
+        public static Setting Setting = null;
     }
 }

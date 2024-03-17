@@ -16,7 +16,7 @@ for ($i = 0; $i -lt $args.Length; $i++) {
 }
 
 # Cached parameter
-$cacheFile = ".\UserProfileList.json"
+$cacheFile = ".\Cache.json"
 if ((Test-Path -Path $cacheFile -PathType Leaf) -and !($argsparam.Refresh)) {
     Get-Content -Path $cacheFile
     exit

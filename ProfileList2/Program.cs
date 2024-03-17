@@ -1,9 +1,8 @@
 using ProfileList2;
-using ProfileList2.Lib;
-using System.Diagnostics;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Nodes;
+
+Item.Setting = Setting.Load();
+Item.Setting.RegisterEnvironment();
+
 
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
