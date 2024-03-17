@@ -1,0 +1,7 @@
+﻿metadata:
+  name: ServerInfo
+  description: 'Show server machine information.'
+  scriptPath: ShowServerInfo.ps1
+  outputType: Console
+  method: GET, POST
+
