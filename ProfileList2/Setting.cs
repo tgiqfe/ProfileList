@@ -28,6 +28,7 @@ namespace ProfileList2
             }
         }
 
+        
         /// <summary>
         /// 初期パラメータをセット
         /// </summary>
