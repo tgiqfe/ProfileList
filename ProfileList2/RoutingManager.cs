@@ -111,54 +111,11 @@ namespace ProfileList2
         /// <param name="targetDir"></param>
         /// <param name="metadataPath"></param>
         /// <param name="argsText"></param>
+        /// <param name="method"></param>
         /// <returns></returns>
         private dynamic ExecuteScript(string targetDir, string metadataPath, string argsText, string method)
         {
-            try
-            {
-                if (File.Exists(metadataPath))
-                {
-                    var metadata = MetadataFile.Load(metadataPath)?.Metadata;
-                    var scriptPath = Path.Combine(targetDir, metadata.ScriptPath);
-                    if (File.Exists(scriptPath))
-                    {
-                        StringBuilder output = new();
-                        using (var proc = Item.LanguageCollection.GetProcess(scriptPath, argsText))
-                        {
-                            proc.StartInfo.CreateNoWindow = true;
-                            proc.StartInfo.UseShellExecute = false;
-                            proc.StartInfo.WorkingDirectory = targetDir;
-                            proc.StartInfo.RedirectStandardOutput = true;
-                            proc.OutputDataReceived += (sender, e) => output.AppendLine(e.Data);
-                            proc.Start();
-                            proc.BeginOutputReadLine();
-                            proc.WaitForExit();
-                        }
-                        return new
-                        {
-                            Status = "OK",
-                            Result = JsonNode.Parse(output.ToString()),
-                        };
-                    }
-                }
-                return new
-                {
-                    Status = "Empty",
-                    Result = JsonNode.Parse("{}"),
-                };
-            }
-            catch (Exception e)
-            {
-                return new
-                {
-                    Status = "NG",
-                    Result = JsonNode.Parse(JsonSerializer.Serialize(new
-                    {
-                        Message = e.Message,
-                        StackTrace = e.StackTrace,
-                    })),
-                };
-            }
+            return ExecuteScriptAsync(targetDir, metadataPath, argsText, method).Result;
         }
 
         /// <summary>
@@ -167,42 +124,65 @@ namespace ProfileList2
         /// <param name="targetDir"></param>
         /// <param name="metadataPath"></param>
         /// <param name="argsText"></param>
+        /// <param name="method"></param>
         /// <returns></returns>
         private async Task<dynamic> ExecuteScriptAsync(string targetDir, string metadataPath, string argsText, string method)
         {
-            try
+            //  メタデータの有無を確認
+            if (!File.Exists(metadataPath))
             {
-                if (File.Exists(metadataPath))
-                {
-                    var metadata = MetadataFile.Load(metadataPath)?.Metadata;
-                    
-
-                    var scriptPath = Path.Combine(targetDir, metadata.ScriptPath);
-                    if (File.Exists(scriptPath))
-                    {
-                        StringBuilder sb = new();
-                        using (var proc = Item.LanguageCollection.GetProcess(scriptPath, argsText))
-                        {
-                            proc.StartInfo.CreateNoWindow = true;
-                            proc.StartInfo.UseShellExecute = false;
-                            proc.StartInfo.WorkingDirectory = targetDir;
-                            proc.StartInfo.RedirectStandardOutput = true;
-                            proc.OutputDataReceived += (sender, e) => sb.AppendLine(e.Data);
-                            proc.Start();
-                            proc.BeginOutputReadLine();
-                            await proc.WaitForExitAsync();
-                        }
-                        return new
-                        {
-                            Status = "OK",
-                            Result = JsonNode.Parse(sb.ToString()),
-                        };
-                    }
-                }
                 return new
                 {
                     Status = "Empty",
                     Result = JsonNode.Parse("{}"),
+                };
+            }
+
+            //  HTTPメソッドが一致するか確認
+            var metadata = MetadataFile.Load(metadataPath)?.Metadata;
+            if (!metadata.IsMatchMethod(method))
+            {
+                return new
+                {
+                    Status = "MethodMismatch",
+                    Result = JsonNode.Parse(JsonSerializer.Serialize(new
+                    {
+                        RequestMethod = method,
+                        ConfigedMethod = metadata.Method,
+                    })),
+                };
+            }
+
+            //  スクリプトファイルの有無を確認
+            var scriptPath = Path.Combine(targetDir, metadata.ScriptPath);
+            if (!File.Exists(scriptPath))
+            {
+                return new
+                {
+                    Status = "ScriptMissing",
+                    Result = JsonNode.Parse("{}"),
+                };
+            }
+
+            //  スクリプトを実行
+            try
+            {
+                StringBuilder sb = new();
+                using (var proc = Item.LanguageCollection.GetProcess(scriptPath, argsText))
+                {
+                    proc.StartInfo.CreateNoWindow = true;
+                    proc.StartInfo.UseShellExecute = false;
+                    proc.StartInfo.WorkingDirectory = targetDir;
+                    proc.StartInfo.RedirectStandardOutput = true;
+                    proc.OutputDataReceived += (sender, e) => sb.AppendLine(e.Data);
+                    proc.Start();
+                    proc.BeginOutputReadLine();
+                    await proc.WaitForExitAsync();
+                }
+                return new
+                {
+                    Status = "OK",
+                    Result = JsonNode.Parse(sb.ToString()),
                 };
             }
             catch (Exception e)
@@ -218,6 +198,5 @@ namespace ProfileList2
                 };
             }
         }
-
     }
 }
