@@ -1,0 +1,7 @@
+﻿metadata:
+  name: ShowNtpSetting
+  description: 'Show ntp setting.'
+  scriptPath: ShowNtpSetting.ps1
+  outputType: Console
+  method: GET, POST
+

@@ -73,6 +73,13 @@ namespace ProfileList2
             });
         }
 
+        /// <summary>
+        /// スクリプト実行以外のシステム処理
+        /// </summary>
+        /// <param name="scriptGroup"></param>
+        /// <param name="scriptname"></param>
+        /// <param name="method"></param>
+        /// <returns>次のスクリプト処理に進まず、セッションを終了するかどうか</returns>
         private (bool, dynamic) SystemProcess(string scriptGroup, string scriptname, string method)
         {
             //  サーバ終了 /api/v1/server/close
