@@ -73,6 +73,16 @@ namespace ProfileList2
             {
                 return ApplicationProcess.Close(app);
             });
+
+            app.MapGet("/api/server/processinfo", () =>
+            {
+                return ApplicationProcess.GetProcessInfo();
+            });
+
+            app.MapPost("/api/server/processinfo", () =>
+            {
+                return ApplicationProcess.GetProcessInfo();
+            });
         }
 
         /// <summary>
