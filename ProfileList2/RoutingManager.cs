@@ -2,7 +2,7 @@
 using System.Text.Json.Nodes;
 using System.Text;
 using System.Text.Json;
-using ProfileList2.Application;
+using ProfileList2.App;
 
 namespace ProfileList2
 {
@@ -64,9 +64,14 @@ namespace ProfileList2
 
         public void RegisterRoutes_app()
         {
-            app.MapPost("/api/server/close", (HttpContext context) =>
+            app.MapGet("/api/server/close", () =>
             {
-                return AppClose.Close(app);
+                return ApplicationProcess.Close(app);
+            });
+
+            app.MapPost("/api/server/close", () =>
+            {
+                return ApplicationProcess.Close(app);
             });
         }
 

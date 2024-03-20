@@ -1,8 +1,8 @@
 ﻿using System.Text.Json.Nodes;
 
-namespace ProfileList2.Application
+namespace ProfileList2.App
 {
-    public class AppClose
+    public class ApplicationProcess
     {
         public static dynamic Close(WebApplication app)
         {
