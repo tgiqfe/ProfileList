@@ -1,8 +1,8 @@
-﻿using ProfileList2.Lib;
-using System.Text.Json.Nodes;
+﻿using System.Text.Json.Nodes;
 using System.Text;
 using System.Text.Json;
 using ProfileList2.App;
+using ProfileList2.Lib.Manifest;
 
 namespace ProfileList2
 {
@@ -172,7 +172,16 @@ namespace ProfileList2
             }
 
             //  スクリプトファイルの有無を確認
-            var scriptPath = Path.Combine(targetDir, metadata.ScriptPath);
+            var scriptName = metadata.GetScriptPath();
+            if(string.IsNullOrEmpty(scriptName))
+            {
+                return new
+                {
+                    Status = "ScriptMissing",
+                    Result = JsonNode.Parse("{}"),
+                };
+            }
+            var scriptPath = Path.Combine(targetDir, scriptName);
             if (!File.Exists(scriptPath))
             {
                 return new

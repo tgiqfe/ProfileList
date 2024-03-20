@@ -1,7 +1,9 @@
 ﻿metadata:
   name: StartTime
   description: 'Show start,shutdown,logon,logoff time'
-  scriptPath: ShowStartTime.ps1
+  script:
+  - os: Windows
+    path: ShowStartTime.ps1
   outputType: Console
   method: GET, POST
 
