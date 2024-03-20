@@ -1,0 +1,9 @@
+﻿metadata:
+  name: RemoteDesktopSetting
+  description: 'Remote desktop setting show and change'
+  script:
+  - os: Windows
+    path: RemoteDesktopSetting.ps1
+  outputType: Console
+  method: GET, POST
+

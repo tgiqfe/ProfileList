@@ -45,7 +45,6 @@ namespace ProfileList2.Lib.Manifest
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                Console.WriteLine("Windows");
                 return Script.
                     Where(x => x.OS == OSType.Windows).
                     Select(x => x.Path).
@@ -53,7 +52,6 @@ namespace ProfileList2.Lib.Manifest
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                Console.WriteLine("Linux");
                 return Script.
                     Where(x => x.OS == OSType.Linux).
                     Select(x => x.Path).
@@ -61,7 +59,6 @@ namespace ProfileList2.Lib.Manifest
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
-                Console.WriteLine("Mac");
                 return Script.
                     Where(x => x.OS == OSType.Mac).
                     Select(x => x.Path).
