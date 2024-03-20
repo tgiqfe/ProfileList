@@ -7,7 +7,7 @@ $argsParam = [pscustomobject]@{
 for ($i = 0; $i -lt $args.Length; $i++) {
     switch ($args[$i]) {
         "-Refresh" { 
-            $tempVal = $false
+            $tempVal = $argsParam.Refresh
             if ([bool]::TryParse($args[++$i], [ref]$tempVal)) {
                 $argsParam.Refresh = $tempVal
             }

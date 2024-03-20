@@ -2,6 +2,7 @@
 using System.Text.Json.Nodes;
 using System.Text;
 using System.Text.Json;
+using ProfileList2.App;
 
 namespace ProfileList2
 {
@@ -14,15 +15,12 @@ namespace ProfileList2
             app = _app;
         }
 
-        public void RegisterRoutes()
+        public void RegisterRoutes_v1()
         {
             //  API v1 (GET)
             app.MapGet("/api/v1/{scriptGroup}/{scriptName}", (string scriptGroup, string scriptName, HttpContext context) =>
             {
                 string method = "GET";
-                (bool isStop, dynamic ret) = SystemProcess(scriptGroup, scriptName, method);
-                if (isStop) { return ret; }
-
                 var targetDir = Path.Combine(Item.WorkingDirectory, "v1", scriptGroup, scriptName);
                 var metadataPath = Path.Combine(targetDir, "metadata.yml");
                 string argsText = ToArgsText(context);
@@ -34,9 +32,6 @@ namespace ProfileList2
             app.MapPost("/api/v1/{scriptGroup}/{scriptName}", async (string scriptGroup, string scriptName, HttpContext context) =>
             {
                 string method = "POST";
-                (bool isStop, dynamic ret) = SystemProcess(scriptGroup, scriptName, method);
-                if (isStop) { return ret; }
-
                 var targetDir = Path.Combine(Item.WorkingDirectory, "v1", scriptGroup, scriptName);
                 var metadataPath = Path.Combine(targetDir, "metadata.yml");
                 var argsText = await ToArgsTextAsync(context);
@@ -48,9 +43,6 @@ namespace ProfileList2
             app.MapPut("/api/v1/{scriptGroup}/{scriptName}", async (string scriptGroup, string scriptName, HttpContext context) =>
             {
                 string method = "PUT";
-                (bool isStop, dynamic ret) = SystemProcess(scriptGroup, scriptName, method);
-                if (isStop) { return ret; }
-
                 var targetDir = Path.Combine(Item.WorkingDirectory, "v1", scriptGroup, scriptName);
                 var metadataPath = Path.Combine(targetDir, "metadata.yml");
                 var argsText = await ToArgsTextAsync(context);
@@ -62,9 +54,6 @@ namespace ProfileList2
             app.MapDelete("/api/v1/{scriptGroup}/{scriptName}", async (string scriptGroup, string scriptName, HttpContext context) =>
             {
                 string method = "DELETE";
-                (bool isStop, dynamic ret) = SystemProcess(scriptGroup, scriptName, method);
-                if (isStop) { return ret; }
-
                 var targetDir = Path.Combine(Item.WorkingDirectory, "v1", scriptGroup, scriptName);
                 var metadataPath = Path.Combine(targetDir, "metadata.yml");
                 var argsText = await ToArgsTextAsync(context);
@@ -73,24 +62,17 @@ namespace ProfileList2
             });
         }
 
-        private (bool, dynamic) SystemProcess(string scriptGroup, string scriptname, string method)
+        public void RegisterRoutes_app()
         {
-            //  サーバ終了 /api/v1/server/close
-            if ((method == "GET" || method == "POST") &&
-                scriptGroup == "server" && scriptname == "close")
+            app.MapGet("/api/server/close", () =>
             {
-                Task.Run(() =>
-                {
-                    Task.Delay(1000);
-                    app.StopAsync();
-                });
-                return (true, new
-                {
-                    Status = "Close",
-                    Result = JsonNode.Parse("{}")
-                });
-            }
-            return (false, null);
+                return ApplicationProcess.Close(app);
+            });
+
+            app.MapPost("/api/server/close", () =>
+            {
+                return ApplicationProcess.Close(app);
+            });
         }
 
         /// <summary>
