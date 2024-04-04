@@ -8,10 +8,16 @@ namespace ProfileList2
     {
         const string settingFile = "setting.json";
 
+        #region Parameter
+
         /// <summary>
         /// 待ち受けポート
         /// </summary>
         public int Port { get; set; }
+
+        public string PwshPath { get; set; }
+
+        public string PythonPath { get; set; }
 
         /// <summary>
         /// プロセス実行中に環境変数に保存する情報
@@ -30,13 +36,16 @@ namespace ProfileList2
             }
         }
 
-        
+        #endregion
+
         /// <summary>
         /// 初期パラメータをセット
         /// </summary>
         public void Init()
         {
             this.Port = 5000;
+            this.PwshPath = null;
+            this.PythonPath = null;
             this.Env = new SettingEnvironment
             {
                 PL_RLAgentPipeKey = "____pipe____key____",
