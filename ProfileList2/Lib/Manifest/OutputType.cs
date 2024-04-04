@@ -1,4 +1,4 @@
-﻿namespace ProfileList2.Lib
+﻿namespace ProfileList2.Lib.Manifest
 {
     public enum OutputType
     {

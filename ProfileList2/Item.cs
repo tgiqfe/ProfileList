@@ -5,9 +5,9 @@ namespace ProfileList2
 {
     public class Item
     {
-        public static string WorkingDirectory = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
+        public static string WorkingDirectory = null;
 
-        public static LanguageCollection LanguageCollection = LanguageCollection.Load(Path.Combine(WorkingDirectory, "languages.json"));
+        public static LanguageCollection LanguageCollection = null;
 
         public static Setting Setting = null;
     }

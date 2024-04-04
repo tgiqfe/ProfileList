@@ -1,7 +1,9 @@
 ﻿metadata:
   name: SessionList
   description: 'Show logged in user session list'
-  scriptPath: ShowLoggedonSessions.ps1
+  script:
+  - os: Windows
+    path: ShowLoggedonSessions.ps1
   outputType: Console
   method: GET, POST
 

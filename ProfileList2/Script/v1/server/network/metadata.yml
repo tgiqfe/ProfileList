@@ -1,0 +1,7 @@
+﻿metadata:
+  name: ServerNetwork
+  description: 'Show server network information.'
+  scriptPath: ShowServerNetwork.ps1
+  outputType: Console
+  method: GET, POST
+

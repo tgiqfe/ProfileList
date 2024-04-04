@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using YamlDotNet.Serialization;
 
-namespace ProfileList2.Lib
+namespace ProfileList2.Lib.Manifest
 {
     public class MetadataFile
     {
@@ -24,7 +24,24 @@ namespace ProfileList2.Lib
                     {
                         Name = "Unknown",
                         Description = "Unknown",
-                        ScriptPath = "Unknown",
+                        Script = new ScriptPath[]
+                        {
+                            new ScriptPath()
+                            {
+                                OS = OSType.Windows,
+                                Path = "Unknown",
+                            },
+                            new ScriptPath()
+                            {
+                                OS = OSType.Linux,
+                                Path = "Unknown",
+                            },
+                            new ScriptPath()
+                            {
+                                OS = OSType.Mac,
+                                Path = "Unknown",
+                            },
+                        },
                         OutputType = OutputType.Console,
                         OutputFilePath = "Unknown",
                     }

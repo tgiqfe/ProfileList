@@ -64,7 +64,7 @@ namespace ProfileList2.Lib.ScriptLanguage
             return new()
             {
                 Name = "PowerShell",
-                Alias = new[] { "pshell", "pwsh" },
+                Alias = new[] { "pshell", "pwsh", "powershell" },
                 Description = "PowerShell (Windows標準版)",
                 Extensions = new[] { ".ps1" },
                 Encoding = "Shift_JIS",
@@ -85,7 +85,7 @@ namespace ProfileList2.Lib.ScriptLanguage
             return new()
             {
                 Name = "Pwsh7",
-                Alias = new[] { "pshell", "pwsh" },
+                Alias = new[] { "pshell", "pwsh", "powershell" },
                 Description = "PowerShell (Cross-Platfform版)",
                 Extensions = new[] { ".ps1" },
                 Encoding = "UTF-8",
@@ -170,7 +170,7 @@ namespace ProfileList2.Lib.ScriptLanguage
             return new()
             {
                 Name = "Python",
-                Alias = new[] { "py" },
+                Alias = new[] { "py", "python" },
                 Description = "Python",
                 Extensions = new[] { ".py", ".pyw" },
                 Encoding = "UTF-8",

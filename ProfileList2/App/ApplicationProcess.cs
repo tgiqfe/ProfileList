@@ -1,4 +1,6 @@
-﻿using System.Text.Json.Nodes;
+﻿using System.Diagnostics;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace ProfileList2.App
 {
@@ -15,6 +17,21 @@ namespace ProfileList2.App
             {
                 Status = "Close",
                 Result = JsonNode.Parse("{}")
+            };
+        }
+
+        public static dynamic GetProcessInfo()
+        {
+            var info = new
+            {
+                MachineName = Environment.MachineName,
+                User = Environment.UserName,
+                ProcessPath = Process.GetCurrentProcess().MainModule.FileName
+            };
+            return new
+            {
+                Status = "OK",
+                Result = JsonNode.Parse(JsonSerializer.Serialize(info))
             };
         }
     }
